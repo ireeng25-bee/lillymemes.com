@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>LILLY MEMES - Your Daily Dose of Laughter 😂🔥</title>
+
+  <!-- Meta & SEO -->
+  <meta name="description" content="LILLY MEMES: Your daily dose of laughter, trending memes, love stories, relatable vibes, and community entertainment.">
+  <meta name="keywords" content="memes, funny memes, malawi memes, trending, entertainment, funny stories, quotes, lilly memes">
+  <meta name="author" content="LILLY MEMES">
+
+  <!-- OpenGraph / Social Sharing -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="LILLY MEMES - Your Daily Dose of Laughter 😂🔥">
+  <meta property="og:description" content="Explore trending memes, laugh every day, react, comment and join the community.">
+  <meta property="og:image" content="assets/logo.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="LILLY MEMES">
+  <meta name="twitter:description" content="Your Daily Dose of Laughter 😂🔥">
+  <meta name="twitter:image" content="assets/logo.png">
+
+  <!-- PWA & Theme Settings -->
+  <meta name="theme-color" content="#0B132B">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="LillyMemes">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="assets/icon.png">
+  <link rel="apple-touch-icon" href="assets/icon.png">
+
+  <!-- Google Fonts: Inter & Outfit for modern, punchy typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Core Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Supabase Official Client Library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.8/dist/umd/supabase.min.js"></script>
+
+  <!-- Supabase Client Configuration & Database Gateway -->
+  <script src="supabase.js"></script>
+
+  <!-- Main Application Logic (Deferred) -->
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <!-- ================================================================= -->
+  <!-- TOP APP BAR (Dark Navy Container)                                  -->
+  <!-- ================================================================= -->
+  <header class="app-header" id="appHeader">
+    <div class="header-inner">
+      <!-- Brand Lockup -->
+      <a href="#" class="brand-link" id="brandHomeLink" aria-label="LILLY MEMES Home">
+        <img src="assets/logo.png" alt="LILLY MEMES Logo" class="brand-logo-img">
+        <div class="brand-text-block">
+          <span class="brand-title">Lilly Memes</span>
+          <span class="brand-subtext">Make Life Funnier <span class="heart-pulse">💖</span></span>
+        </div>
+      </a>
+
+      <!-- Global Search Bar -->
+      <div class="search-container" role="search">
+        <span class="search-icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </span>
+        <input 
+          type="search" 
+          id="globalSearchInput" 
+          class="search-input" 
+          placeholder="Search memes, categories, tags..." 
+          aria-label="Search memes and categories"
+          autocomplete="off"
+        >
+        <button type="button" id="searchClearBtn" class="search-clear-btn" aria-label="Clear search" hidden>&times;</button>
+        <!-- Real-time Quick Search Results Dropdown -->
+        <div id="searchDropdown" class="search-dropdown" hidden>
+          <div id="searchResultsList" class="search-results-list"></div>
+        </div>
+      </div>
+
+      <!-- Right Header Actions (Auth / Notifications / Profile) -->
+      <div class="header-actions">
+        <!-- Notification Button with Dynamic Unread Badge -->
+        <div class="notification-wrapper">
+          <button type="button" class="header-icon-btn" id="notifBellBtn" aria-label="View notifications" aria-expanded="false" aria-haspopup="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+            <span class="notif-badge" id="headerNotifBadge" hidden>0</span>
+          </button>
+
+          <!-- Notifications Flyout Panel -->
+          <section class="dropdown-panel notif-dropdown" id="notifDropdown" hidden aria-label="Notifications list">
+            <div class="dropdown-header">
+              <h3 class="dropdown-title">Notifications</h3>
+              <button type="button" class="text-action-btn" id="markAllNotifsReadBtn">Mark all as read</button>
+            </div>
+            <div class="notif-list-container" id="notifListContainer">
+              <div class="empty-state-small" id="notifEmptyState">
+                <span>🔔 No new notifications</span>
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <!-- Authenticated User Menu or Guest Auth Buttons -->
+        <div class="auth-area" id="headerAuthArea">
+          <!-- Rendered for Guests -->
+          <div class="guest-actions" id="guestActions">
+            <button type="button" class="btn btn-sm btn-outline-light" id="openLoginBtn">Log In</button>
+            <button type="button" class="btn btn-sm btn-pink" id="openSignUpBtn">Sign Up</button>
+          </div>
+
+          <!-- Rendered for Authenticated Users -->
+          <div class="user-menu-wrapper" id="userMenuWrapper" hidden>
+            <button type="button" class="user-pill-btn" id="userMenuBtn" aria-haspopup="true" aria-expanded="false">
+              <img src="assets/icon.png" alt="Profile" class="user-avatar-small" id="headerUserAvatar">
+              <span class="user-name-text" id="headerUserName">Member</span>
+              <svg class="dropdown-caret" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+
+            <!-- User Menu Dropdown -->
+            <div class="dropdown-panel user-dropdown" id="userDropdown" hidden>
+              <div class="user-dropdown-header">
+                <div class="user-dropdown-name" id="menuFullName">Member</div>
+                <div class="user-dropdown-role" id="menuUserRole">User</div>
+              </div>
+              <div class="dropdown-divider"></div>
+              <ul class="menu-list">
+                <li>
+                  <button type="button" class="menu-item-btn" id="menuMyProfileBtn">
+                    <span class="menu-icon">👤</span> My Profile
+                  </button>
+                </li>
+                <li>
+                  <button type="button" class="menu-item-btn" id="menuSavedMemesBtn">
+                    <span class="menu-icon">🔖</span> Saved Memes
+                  </button>
+                </li>
+                <li>
+                  <button type="button" class="menu-item-btn" id="menuNotifSettingsBtn">
+                    <span class="menu-icon">⚙️</span> Notification Settings
+                  </button>
+                </li>
+                <!-- Admin Only Panel Shortcut (Backend Role Protected) -->
+                <li id="adminMenuLi" hidden>
+                  <button type="button" class="menu-item-btn text-purple" id="menuAdminDashboardBtn">
+                    <span class="menu-icon">👑</span> Admin Dashboard
+                  </button>
+                </li>
+              </ul>
+              <div class="dropdown-divider"></div>
+              <button type="button" class="menu-item-btn text-danger" id="logoutBtn">
+                <span class="menu-icon">🚪</span> Log Out
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================================================================= -->
+  <!-- MAIN APP CONTAINER (3-Column Layout Matching Dashboard Reference)  -->
+  <!-- ================================================================= -->
+  <div class="app-layout">
+
+    <!-- =============================================================== -->
+    <!-- COLUMN 1: LEFT SIDEBAR NAVIGATION & CATEGORIES                  -->
+    <!-- =============================================================== -->
+    <aside class="sidebar-left" id="sidebarLeft" aria-label="Main Navigation">
+      <div class="sidebar-inner">
+        <!-- Main Route Navigation -->
+        <nav class="sidebar-nav">
+          <ul class="nav-list">
+            <li class="nav-item">
+              <a href="#feed" class="nav-link active" data-route="feed" id="navHome">
+                <span class="nav-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                  </svg>
+                </span>
+                <span class="nav-label">Home</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#trending" class="nav-link" data-route="trending" id="navTrending">
+                <span class="nav-icon">🔥</span>
+                <span class="nav-label">Trending</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#meme-of-the-day" class="nav-link" data-route="motd" id="navMotd">
+                <span class="nav-icon">🏆</span>
+                <span class="nav-label">Meme of the Day</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#categories" class="nav-link" data-route="categories" id="navCategories">
+                <span class="nav-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z"/>
+                  </svg>
+                </span>
+                <span class="nav-label">Categories</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#saved" class="nav-link" data-route="saved" id="navSaved">
+                <span class="nav-icon">🔖</span>
+                <span class="nav-label">Saved Memes</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#for-you" class="nav-link" data-route="for-you" id="navForYou">
+                <span class="nav-icon">❤️</span>
+                <span class="nav-label">For You</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#stories" class="nav-link" data-route="stories" id="navStories">
+                <span class="nav-icon">📖</span>
+                <span class="nav-label">Stories</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="#quotes" class="nav-link" data-route="quotes" id="navQuotes">
+                <span class="nav-icon">💭</span>
+                <span class="nav-label">Quotes</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <button type="button" class="nav-link nav-btn-action" id="sidebarSurpriseBtn">
+                <span class="nav-icon">🎁</span>
+                <span class="nav-label">Surprise Me</span>
+              </button>
+            </li>
+          </ul>
+        </nav>
+
+        <!-- Sidebar Category Quick Links (Matching Dashboard Reference) -->
+        <div class="sidebar-section">
+          <div class="sidebar-section-header">
+            <span class="section-icon-bars">☰</span>
+            <h4 class="sidebar-section-title">Categories</h4>
+          </div>
+          <ul class="category-menu-list" id="sidebarCategoryList">
+            <li>
+              <button type="button" class="cat-menu-link" data-category="Funny">
+                <span class="cat-emoji">😂</span>
+                <span class="cat-name">Funny</span>
+              </button>
+            </li>
+            <li>
+              <button type="button" class="cat-menu-link" data-category="Love">
+                <span class="cat-emoji">💖</span>
+                <span class="cat-name">Love</span>
+              </button>
+            </li>
+            <li>
+              <button type="button" class="cat-menu-link" data-category="Savage">
+                <span class="cat-emoji">😈</span>
+                <span class="cat-name">Savage</span>
+              </button>
+            </li>
+            <li>
+              <button type="button" class="cat-menu-link" data-category="School">
+                <span class="cat-emoji">🎓</span>
+                <span class="cat-name">School</span>
+              </button>
+            </li>
+            <li>
+              <button type="button" class="cat-menu-link" data-category="Football">
+                <span class="cat-emoji">⚽</span>
+                <span class="cat-name">Football</span>
+              </button>
+            </li>
+            <li>
+              <button type="button" class="cat-menu-link" data-category="Quotes">
+                <span class="cat-emoji">💬</span>
+                <span class="cat-name">Quotes</span>
+              </button>
+            </li>
+            <li>
+              <button type="button" class="cat-menu-link" data-category="Motivation">
+                <span class="cat-emoji">💪</span>
+                <span class="cat-name">Motivation</span>
+              </button>
+            </li>
+            <li>
+              <button type="button" class="cat-menu-link" data-category="Malawi">
+                <span class="cat-emoji">🇲🇼</span>
+                <span class="cat-name">Malawi</span>
+              </button>
+            </li>
+            <li>
+              <button type="button" class="cat-menu-link" data-category="Horror">
+                <span class="cat-emoji">👻</span>
+                <span class="cat-name">Horror</span>
+              </button>
+            </li>
+            <li>
+              <button type="button" class="cat-menu-link" data-category="Relationships">
+                <span class="cat-emoji">💕</span>
+                <span class="cat-name">Relationships</span>
+              </button>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Sidebar Promo Sticker Card (Reference visual: "Good Vibes Only") -->
+        <div class="sidebar-sticker-card">
+          <div class="sticker-badge-glow">
+            <span class="sticker-crown">👑</span>
+            <span class="sticker-title">Good Vibes Only</span>
+            <span class="sticker-heart">💖</span>
+          </div>
+          <p class="sticker-subtext">Spread laughter every day!</p>
+        </div>
+
+        <!-- Developer Advertisement (Mandatory Requirement Rule 38) -->
+        <footer class="sidebar-dev-footer">
+          <div class="dev-card">
+            <div class="dev-tag">Need an app or website? 🚀</div>
+            <div class="dev-name">Developed by <strong>Abraham Msofi</strong></div>
+            <div class="dev-contact-links">
+              <a href="mailto:ireeng25@gmail.com" class="dev-link" title="Email Lilly Memes">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                Email
+              </a>
+              <a href="https://wa.me/265995000812" target="_blank" rel="noopener noreferrer" class="dev-link dev-link-wa" title="WhatsApp Abraham Msofi">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+                WhatsApp
+              </a>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </aside>
+
+    <!-- =============================================================== -->
+    <!-- COLUMN 2: CENTER WORKSPACE / MAIN FEED                          -->
+    <!-- =============================================================== -->
+    <main class="main-content" id="mainContent">
+
+      <!-- Dynamic Time-of-Day Personalized Greeting Banner -->
+      <section class="greeting-banner" id="greetingBanner" aria-live="polite">
+        <div class="greeting-content">
+          <div class="greeting-title-wrap">
+            <span class="greeting-sun-icon" id="greetingIcon">☀️</span>
+            <h1 class="greeting-heading" id="greetingHeading">Good Morning, Esther! 👋</h1>
+          </div>
+          <p class="greeting-subtext" id="greetingSubtext">Hope your day is full of smiles and good vibes!</p>
+          <div class="greeting-pill-badge">
+            Keep smiling, life is better with memes! 💖
+          </div>
+        </div>
+
+        <div class="greeting-graphic">
+          <div class="greeting-mascot-wrap">
+            <div class="mascot-crown">👑</div>
+            <div class="mascot-avatar">
+              <span class="mascot-emoji">😎</span>
+            </div>
+            <div class="mascot-quote-bubble">
+              <span class="quote-text">Laugh More,<br>Worry Less</span>
+              <span class="bubble-heart">💖</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Category Quick Selector Cards (Reference Design) -->
+      <section class="quick-categories-section" aria-label="Quick Category Filter">
+        <div class="quick-cat-scroll" id="quickCatScroll">
+          <button type="button" class="quick-cat-card card-yellow active" data-category="all">
+            <span class="qcat-emoji">🔥</span>
+            <span class="qcat-title">All Memes</span>
+          </button>
+          <button type="button" class="quick-cat-card card-amber" data-category="Funny">
+            <span class="qcat-emoji">😂</span>
+            <span class="qcat-title">Funny</span>
+          </button>
+          <button type="button" class="quick-cat-card card-pink" data-category="Love">
+            <span class="qcat-emoji">🤍</span>
+            <span class="qcat-title">Love</span>
+          </button>
+          <button type="button" class="quick-cat-card card-purple" data-category="Savage">
+            <span class="qcat-emoji">😈</span>
+            <span class="qcat-title">Savage</span>
+          </button>
+          <button type="button" class="quick-cat-card card-green" data-category="Motivation">
+            <span class="qcat-emoji">💪</span>
+            <span class="qcat-title">Motivation</span>
+          </button>
+          <button type="button" class="quick-cat-card card-blue" data-category="Football">
+            <span class="qcat-emoji">⚽</span>
+            <span class="qcat-title">Football</span>
+          </button>
+          <button type="button" class="quick-cat-card card-outline" id="browseAllCategoriesBtn">
+            <span class="qcat-icon-grid">⊞</span>
+            <span class="qcat-title">More</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Section: Trending Memes (Ranked Horizontal Carousel) -->
+      <section class="feed-section" id="trendingSection" aria-label="Trending Memes">
+        <div class="feed-section-header">
+          <div class="section-title-wrap">
+            <span class="section-title-icon fire-icon">🔥</span>
+            <h2 class="section-title">Trending Memes</h2>
+          </div>
+          <button type="button" class="view-all-link" id="viewAllTrendingBtn">View All &rsaquo;</button>
+        </div>
+
+        <div class="trending-cards-grid" id="trendingCardsContainer">
+          <!-- Loaded dynamically from real Supabase database records -->
+          <div class="feed-loading-skeleton" id="trendingLoading">
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: Latest Memes Feed (4-Column Grid Reference) -->
+      <section class="feed-section" id="latestSection" aria-label="Latest Memes Feed">
+        <div class="feed-section-header">
+          <div class="section-title-wrap">
+            <span class="section-title-icon box-icon">📂</span>
+            <h2 class="section-title">Latest Memes</h2>
+          </div>
+          <button type="button" class="view-all-link" id="viewAllLatestBtn">View All &rsaquo;</button>
+        </div>
+
+        <div class="memes-grid-container" id="memesFeedContainer">
+          <!-- Loaded dynamically from real Supabase database records -->
+          <div class="feed-loading-skeleton" id="feedLoading">
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+          </div>
+        </div>
+
+        <!-- Pagination / Load More -->
+        <div class="load-more-wrap" id="loadMoreWrap">
+          <button type="button" class="btn btn-outline-purple" id="loadMoreMemesBtn" hidden>Load More Memes</button>
+          <div class="feed-end-message" id="feedEndMessage" hidden>You're all caught up! Check back later for more memes. 😂🔥</div>
+        </div>
+      </section>
+
+      <!-- Section: "For You" & "Surprise Me" Lucky Box Grid -->
+      <section class="feed-section split-bottom-section" id="curatedSection">
+        <div class="curated-column">
+          <div class="feed-section-header">
+            <div class="section-title-wrap">
+              <span class="section-title-icon target-icon">🎯</span>
+              <div>
+                <h2 class="section-title">For You</h2>
+                <p class="section-subtitle">Memes picked just for you</p>
+              </div>
+            </div>
+            <button type="button" class="view-all-link" id="viewAllForYouBtn">View All &rsaquo;</button>
+          </div>
+          <div class="foryou-cards-row" id="forYouCardsContainer">
+            <!-- Dynamic data populated by Supabase -->
+          </div>
+        </div>
+
+        <!-- Feeling Lucky Gift Box Card (Direct from reference) -->
+        <aside class="surprise-column">
+          <div class="feeling-lucky-card">
+            <div class="lucky-header">
+              <h3 class="lucky-title">Feeling Lucky? 🎁</h3>
+              <p class="lucky-subtitle">Get a random meme now!</p>
+            </div>
+            <div class="lucky-box-visual">
+              <span class="lucky-gift-icon">🎁</span>
+            </div>
+            <button type="button" class="btn btn-pink btn-block" id="surpriseMeCenterBtn">Surprise Me</button>
+          </div>
+        </aside>
+      </section>
+
+      <!-- Section: Stories Section (Rule 23) -->
+      <section class="feed-section" id="storiesSection" hidden>
+        <div class="feed-section-header">
+          <div class="section-title-wrap">
+            <span class="section-title-icon">📖</span>
+            <div>
+              <h2 class="section-title">Engaging Stories</h2>
+              <p class="section-subtitle">Love, horror, sad, and funny real-life tales</p>
+            </div>
+          </div>
+        </div>
+        <div class="stories-grid" id="storiesGridContainer">
+          <!-- Loaded dynamically -->
+        </div>
+      </section>
+
+      <!-- Section: Quotes Section (Rule 24) -->
+      <section class="feed-section" id="quotesSection" hidden>
+        <div class="feed-section-header">
+          <div class="section-title-wrap">
+            <span class="section-title-icon">💭</span>
+            <div>
+              <h2 class="section-title">Daily Quotes & Motivation</h2>
+              <p class="section-subtitle">Inspirational words, love thoughts, and daily gospel vibes</p>
+            </div>
+          </div>
+        </div>
+        <div class="quotes-grid" id="quotesGridContainer">
+          <!-- Loaded dynamically -->
+        </div>
+      </section>
+
+      <!-- Section: Daily Meme Challenge (Rule 27) -->
+      <section class="feed-section challenge-card" id="challengeSection">
+        <div class="challenge-inner">
+          <div class="challenge-badge">🔥 TODAY'S CHALLENGE</div>
+          <h3 class="challenge-title" id="challengeTitle">Caption this picture! 😂</h3>
+          <p class="challenge-prompt" id="challengePrompt">Give your funniest caption. Winner gets featured on Meme of the Day!</p>
+          <div class="challenge-media-wrap" id="challengeMediaWrap">
+            <!-- Dynamic challenge image -->
+          </div>
+          <div class="challenge-actions">
+            <button type="button" class="btn btn-purple" id="submitChallengeCaptionBtn">Submit Your Caption</button>
+            <span class="challenge-entries-count" id="challengeEntriesCount">0 entries submitted</span>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- =============================================================== -->
+    <!-- COLUMN 3: RIGHT SIDEBAR (Meme of Day, Quick Actions, Activity)  -->
+    <!-- =============================================================== -->
+    <aside class="sidebar-right" id="sidebarRight" aria-label="Spotlight & Quick Access">
+      <div class="sidebar-right-inner">
+
+        <!-- Meme of the Day Spotlight Card (Dark Navy High-Contrast) -->
+        <article class="motd-spotlight-card" id="motdCard">
+          <div class="motd-header">
+            <div class="motd-badge">
+              <span class="trophy-icon">🏆</span>
+              <span class="motd-label">Meme of the Day</span>
+              <span class="crown-icon">👑</span>
+            </div>
+            <span class="motd-arrow">&rsaquo;</span>
+          </div>
+
+          <div class="motd-body" id="motdContent">
+            <div class="motd-media-wrap">
+              <img src="assets/icon.png" alt="Meme of the Day" class="motd-image" id="motdImage" loading="lazy">
+            </div>
+            <h4 class="motd-title" id="motdTitle">When you realize it's only Monday...</h4>
+            <div class="motd-stats">
+              <span class="stat-pill" title="Views">
+                <span class="stat-icon">👁️</span>
+                <span id="motdViews">52.8K</span>
+              </span>
+              <span class="stat-pill" title="Likes">
+                <span class="stat-icon">❤️</span>
+                <span id="motdLikes">12.6K</span>
+              </span>
+              <span class="stat-pill" title="Comments">
+                <span class="stat-icon">💬</span>
+                <span id="motdComments">1.2K</span>
+              </span>
+            </div>
+          </div>
+        </article>
+
+        <!-- Quick Actions Panel -->
+        <section class="panel-card quick-actions-panel">
+          <div class="panel-header">
+            <span class="panel-icon bolt-icon">⚡</span>
+            <h3 class="panel-title">Quick Actions</h3>
+          </div>
+          <div class="quick-action-buttons">
+            <button type="button" class="action-btn btn-purple-grad" id="qaBrowseCategories">
+              <span class="qa-icon">⊞</span>
+              <span>Browse Categories</span>
+            </button>
+            <button type="button" class="action-btn btn-pink-grad" id="qaViewTrending">
+              <span class="qa-icon">🔥</span>
+              <span>View Trending</span>
+            </button>
+            <button type="button" class="action-btn btn-cyan-grad" id="qaSavedMemes">
+              <span class="qa-icon">🔖</span>
+              <span>Saved Memes</span>
+            </button>
+            <button type="button" class="action-btn btn-orange-grad" id="qaSurpriseMe">
+              <span class="qa-icon">🎁</span>
+              <span>Surprise Me &rsaquo;</span>
+            </button>
+            <!-- Admin Only Post Trigger Button -->
+            <button type="button" class="action-btn btn-admin-gold" id="qaAdminCreatePost" hidden>
+              <span class="qa-icon">➕</span>
+              <span>Create Post (Admin)</span>
+            </button>
+          </div>
+        </section>
+
+        <!-- Recent Activity Feed (Real Notifications / Community Events) -->
+        <section class="panel-card activity-panel">
+          <div class="panel-header">
+            <div class="panel-title-wrap">
+              <span class="panel-icon bell-icon">🔔</span>
+              <h3 class="panel-title">Recent Activity</h3>
+            </div>
+            <button type="button" class="panel-link" id="viewAllActivityBtn">View All &rsaquo;</button>
+          </div>
+          <ul class="activity-list" id="recentActivityList">
+            <li class="activity-empty-msg">No recent activity. Check back soon!</li>
+          </ul>
+        </section>
+
+        <!-- Popular Categories Cloud -->
+        <section class="panel-card categories-cloud-panel">
+          <div class="panel-header">
+            <div class="panel-title-wrap">
+              <span class="panel-icon fire-icon">🔥</span>
+              <h3 class="panel-title">Popular Categories</h3>
+            </div>
+            <button type="button" class="panel-link" id="viewAllCategoriesPanelBtn">View All &rsaquo;</button>
+          </div>
+          <div class="cat-chip-cloud" id="popularCatChips">
+            <button type="button" class="cat-chip chip-yellow" data-category="Funny">Funny</button>
+            <button type="button" class="cat-chip chip-pink" data-category="Love">Love</button>
+            <button type="button" class="cat-chip chip-purple" data-category="Savage">Savage</button>
+            <button type="button" class="cat-chip chip-blue" data-category="School">School</button>
+            <button type="button" class="cat-chip chip-green" data-category="Football">Football</button>
+            <button type="button" class="cat-chip chip-lavender" data-category="Quotes">Quotes</button>
+            <button type="button" class="cat-chip chip-orange" data-category="Motivation">Motivation</button>
+            <button type="button" class="cat-chip chip-crimson" data-category="Malawi">Malawi</button>
+          </div>
+        </section>
+
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- ================================================================= -->
+  <!-- MOBILE BOTTOM NAVIGATION (Matches Reference Mockup Behavior)     -->
+  <!-- ================================================================= -->
+  <nav class="mobile-bottom-nav" aria-label="Mobile Navigation">
+    <a href="#feed" class="mobile-nav-link active" data-route="feed" id="mobNavHome">
+      <span class="mob-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      </span>
+      <span class="mob-label">Home</span>
+    </a>
+    <a href="#trending" class="mobile-nav-link" data-route="trending" id="mobNavTrending">
+      <span class="mob-icon">🔥</span>
+      <span class="mob-label">Trending</span>
+    </a>
+    <!-- Central Prominent Action Floating Button -->
+    <div class="mobile-fab-wrap">
+      <button type="button" class="mobile-fab-btn" id="mobileActionFab" aria-label="Quick Action">
+        <span class="fab-icon" id="fabIcon">✨</span>
+      </button>
+    </div>
+    <a href="#saved" class="mobile-nav-link" data-route="saved" id="mobNavSaved">
+      <span class="mob-icon">🔖</span>
+      <span class="mob-label">Saved</span>
+    </a>
+    <button type="button" class="mobile-nav-link" id="mobNavProfile">
+      <span class="mob-icon">👤</span>
+      <span class="mob-label">Profile</span>
+    </button>
+  </nav>
+
+  <!-- ================================================================= -->
+  <!-- MODALS & DRAWERS (Production-grade semantic dialogs)              -->
+  <!-- ================================================================= -->
+
+  <!-- AUTHENTICATION MODAL (Login / Register Tabs) -->
+  <dialog class="app-modal" id="authModal" aria-labelledby="authModalTitle">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div class="brand-auth-header">
+          <img src="assets/logo.png" alt="LILLY MEMES" class="auth-modal-logo">
+          <h2 class="modal-title" id="authModalTitle">Welcome to LILLY MEMES</h2>
+          <p class="modal-subtitle">Your Daily Dose of Laughter 😂🔥</p>
+        </div>
+        <button type="button" class="modal-close-btn" id="closeAuthModalBtn" aria-label="Close dialog">&times;</button>
+      </div>
+
+      <!-- Auth Tab Switcher -->
+      <div class="auth-tabs" role="tablist">
+        <button type="button" class="auth-tab-btn active" id="tabLoginBtn" role="tab" aria-selected="true" aria-controls="loginTabPanel">Log In</button>
+        <button type="button" class="auth-tab-btn" id="tabRegisterBtn" role="tab" aria-selected="false" aria-controls="registerTabPanel">Create Account</button>
+      </div>
+
+      <!-- Log In Form Panel -->
+      <div class="auth-panel" id="loginTabPanel" role="tabpanel">
+        <form id="loginForm" class="auth-form" novalidate>
+          <div class="form-group">
+            <label for="loginEmail" class="form-label">Email Address</label>
+            <input type="email" id="loginEmail" class="form-control" required placeholder="you@example.com" autocomplete="email">
+            <div class="form-error" id="loginEmailError"></div>
+          </div>
+          <div class="form-group">
+            <label for="loginPassword" class="form-label">Password</label>
+            <input type="password" id="loginPassword" class="form-control" required placeholder="••••••••" autocomplete="current-password">
+            <div class="form-error" id="loginPasswordError"></div>
+          </div>
+          <div class="form-actions-inline">
+            <button type="button" class="text-link-sm" id="forgotPasswordBtn">Forgot Password?</button>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block" id="submitLoginBtn">
+            <span class="btn-text">Sign In & Enjoy Memes 😂</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Register Form Panel (Rule 9: Always creates a USER role, never admin) -->
+      <div class="auth-panel" id="registerTabPanel" role="tabpanel" hidden>
+        <form id="registerForm" class="auth-form" novalidate>
+          <div class="form-group">
+            <label for="regUsername" class="form-label">Username</label>
+            <input type="text" id="regUsername" class="form-control" required placeholder="e.g. meme_master265" autocomplete="username" minlength="3" maxlength="24">
+            <div class="form-help">Lowercase letters, numbers, and underscores only.</div>
+            <div class="form-error" id="regUsernameError"></div>
+          </div>
+          <div class="form-group">
+            <label for="regDisplayName" class="form-label">Display Name</label>
+            <input type="text" id="regDisplayName" class="form-control" required placeholder="e.g. Esther Banda">
+            <div class="form-error" id="regDisplayNameError"></div>
+          </div>
+          <div class="form-group">
+            <label for="regEmail" class="form-label">Email Address</label>
+            <input type="email" id="regEmail" class="form-control" required placeholder="you@example.com" autocomplete="email">
+            <div class="form-error" id="regEmailError"></div>
+          </div>
+          <div class="form-group">
+            <label for="regPassword" class="form-label">Password</label>
+            <input type="password" id="regPassword" class="form-control" required placeholder="Minimum 6 characters" autocomplete="new-password" minlength="6">
+            <div class="form-error" id="regPasswordError"></div>
+          </div>
+          <button type="submit" class="btn btn-pink btn-block" id="submitRegisterBtn">
+            <span class="btn-text">Create Account & Join 🔥</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- MEME DETAIL, COMMENTS & REACTIONS MODAL -->
+  <dialog class="app-modal meme-detail-modal" id="memeModal" aria-labelledby="memeModalCaption">
+    <div class="modal-dialog modal-lg">
+      <button type="button" class="modal-close-btn float-close" id="closeMemeModalBtn" aria-label="Close dialog">&times;</button>
+      
+      <div class="meme-modal-grid">
+        <!-- Left Column: Visual Media -->
+        <div class="meme-modal-media-col">
+          <div class="meme-image-container">
+            <img src="" alt="Meme detail" class="meme-modal-image" id="modalMemeImg">
+          </div>
+        </div>
+
+        <!-- Right Column: Metadata, Creator, Reactions, Comments -->
+        <div class="meme-modal-info-col">
+          <!-- Creator Info Header -->
+          <div class="meme-author-header">
+            <div class="author-avatar-wrap">
+              <img src="assets/icon.png" alt="Creator Avatar" class="author-avatar" id="modalAuthorAvatar">
+            </div>
+            <div class="author-meta">
+              <div class="author-name-line">
+                <span class="author-name" id="modalAuthorName">LILLY MEMES</span>
+                <span class="official-badge" id="modalOfficialBadge" title="Official Creator">✓</span>
+              </div>
+              <span class="post-time" id="modalPostTime">Just now</span>
+            </div>
+            <button type="button" class="btn-icon-round" id="modalSaveBtn" aria-label="Save meme">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
+            </button>
+          </div>
+
+          <!-- Caption & Category -->
+          <div class="meme-caption-body">
+            <div class="badge-category" id="modalCategoryBadge">😂 Funny</div>
+            <p class="meme-caption-text" id="modalMemeCaption"></p>
+            <div class="meme-tags-row" id="modalTagsRow"></div>
+          </div>
+
+          <!-- Live Engagement Counters (Rule 12 & 13) -->
+          <div class="meme-metrics-bar">
+            <span class="metric-item"><span class="metric-icon">👁️</span> <strong id="modalViewCount">0</strong> views</span>
+            <span class="metric-item"><span class="metric-icon">❤️</span> <strong id="modalReactionCount">0</strong> reactions</span>
+            <span class="metric-item"><span class="metric-icon">💬</span> <strong id="modalCommentCount">0</strong> comments</span>
+            <span class="metric-item"><span class="metric-icon">🔄</span> <strong id="modalShareCount">0</strong> shares</span>
+          </div>
+
+          <!-- Reaction Selector Bar (Rule 13: ❤️ Love, 😂 Funny, 🔥 Fire, 😮 Wow, 💀 Dead) -->
+          <div class="reactions-picker" id="reactionsPicker">
+            <button type="button" class="rxn-btn" data-reaction="love" aria-label="React Love">
+              <span class="rxn-emoji">❤️</span>
+              <span class="rxn-count" id="countLove">0</span>
+            </button>
+            <button type="button" class="rxn-btn" data-reaction="funny" aria-label="React Funny">
+              <span class="rxn-emoji">😂</span>
+              <span class="rxn-count" id="countFunny">0</span>
+            </button>
+            <button type="button" class="rxn-btn" data-reaction="fire" aria-label="React Fire">
+              <span class="rxn-emoji">🔥</span>
+              <span class="rxn-count" id="countFire">0</span>
+            </button>
+            <button type="button" class="rxn-btn" data-reaction="wow" aria-label="React Wow">
+              <span class="rxn-emoji">😮</span>
+              <span class="rxn-count" id="countWow">0</span>
+            </button>
+            <button type="button" class="rxn-btn" data-reaction="dead" aria-label="React Dead">
+              <span class="rxn-emoji">💀</span>
+              <span class="rxn-count" id="countDead">0</span>
+            </button>
+          </div>
+
+          <!-- Share Actions (Rule 15: WhatsApp, Facebook, Copy Link, Native Share) -->
+          <div class="share-actions-row">
+            <button type="button" class="share-chip btn-share-wa" id="shareWaBtn">
+              <span>WhatsApp</span>
+            </button>
+            <button type="button" class="share-chip btn-share-fb" id="shareFbBtn">
+              <span>Facebook</span>
+            </button>
+            <button type="button" class="share-chip btn-share-copy" id="shareCopyBtn">
+              <span>Copy Link</span>
+            </button>
+            <button type="button" class="share-chip btn-share-native" id="shareNativeBtn">
+              <span>Share...</span>
+            </button>
+          </div>
+
+          <!-- Real Comments Section (Rule 14) -->
+          <div class="comments-section">
+            <h4 class="comments-heading">Comments (<span id="commentsHeaderCount">0</span>)</h4>
+            
+            <div class="comments-list" id="modalCommentsList">
+              <div class="empty-state-comments" id="emptyCommentsState">
+                Be the first to leave a comment! 😂👇
+              </div>
+            </div>
+
+            <!-- Comment Input Box -->
+            <form class="comment-input-form" id="commentSubmitForm">
+              <input 
+                type="text" 
+                id="commentInputField" 
+                class="comment-input" 
+                placeholder="Add a comment... (Be funny!)" 
+                maxlength="500" 
+                required
+              >
+              <button type="submit" class="btn btn-purple btn-sm" id="postCommentBtn">Post</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ADMIN CREATE / EDIT POST MODAL (Rule 11: Real Post Publishing) -->
+  <dialog class="app-modal" id="adminPostModal" aria-labelledby="adminModalTitle">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2 class="modal-title" id="adminModalTitle">👑 Create Official Meme Post</h2>
+        <button type="button" class="modal-close-btn" id="closeAdminPostModalBtn" aria-label="Close dialog">&times;</button>
+      </div>
+      <form id="adminCreatePostForm" class="admin-form" novalidate>
+        <div class="form-group">
+          <label class="form-label" for="memeImageFileInput">Meme Image *</label>
+          <div class="file-drop-zone" id="memeFileDropZone">
+            <input type="file" id="memeImageFileInput" accept="image/png, image/jpeg, image/webp, image/gif" class="file-input" required>
+            <div class="drop-zone-placeholder" id="dropZonePrompt">
+              <span class="drop-icon">📷</span>
+              <p>Click or drag meme image here (PNG, JPG, WebP, GIF)</p>
+            </div>
+            <div class="image-preview-wrap" id="imagePreviewWrap" hidden>
+              <img src="" alt="Meme preview" id="memeUploadPreview" class="upload-preview-img">
+              <button type="button" class="remove-file-btn" id="removeUploadFileBtn">&times;</button>
+            </div>
+          </div>
+          <div class="form-error" id="postImageError"></div>
+        </div>
+
+        <div class="form-group">
+          <label for="postCaption" class="form-label">Caption *</label>
+          <textarea id="postCaption" class="form-control" rows="3" placeholder="Enter a hilarious caption..." required maxlength="600"></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-half">
+            <label for="postCategorySelect" class="form-label">Category *</label>
+            <select id="postCategorySelect" class="form-control" required>
+              <option value="Funny">😂 Funny</option>
+              <option value="Love">💖 Love</option>
+              <option value="Savage">😈 Savage</option>
+              <option value="School">🎓 School</option>
+              <option value="Football">⚽ Football</option>
+              <option value="Quotes">💬 Quotes</option>
+              <option value="Motivation">💪 Motivation</option>
+              <option value="Malawi">🇲🇼 Malawi Memes</option>
+              <option value="Horror">👻 Horror</option>
+              <option value="Relationships">💕 Relationships</option>
+              <option value="Random">🤣 Random</option>
+            </select>
+          </div>
+
+          <div class="form-group col-half">
+            <label for="postHashtags" class="form-label">Hashtags</label>
+            <input type="text" id="postHashtags" class="form-control" placeholder="#funny #malawi #relatable">
+          </div>
+        </div>
+
+        <div class="form-checkbox-group">
+          <label class="custom-checkbox">
+            <input type="checkbox" id="postIsFeatured">
+            <span class="checkmark"></span>
+            Featured in Trending
+          </label>
+          <label class="custom-checkbox">
+            <input type="checkbox" id="postIsMotd">
+            <span class="checkmark"></span>
+            Set as Meme of the Day 🏆
+          </label>
+          <label class="custom-checkbox">
+            <input type="checkbox" id="postSendNotification" checked>
+            <span class="checkmark"></span>
+            Send Push Notification to Followers 🔔
+          </label>
+        </div>
+
+        <div class="modal-footer-actions">
+          <button type="button" class="btn btn-outline-light" id="cancelAdminPostBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="submitPublishMemeBtn">
+            <span class="btn-text">Publish Meme Now 🔥</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- USER PROFILE & SETTINGS MODAL -->
+  <dialog class="app-modal" id="profileModal" aria-labelledby="profileModalTitle">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2 class="modal-title" id="profileModalTitle">My Profile</h2>
+        <button type="button" class="modal-close-btn" id="closeProfileModalBtn" aria-label="Close dialog">&times;</button>
+      </div>
+
+      <div class="profile-modal-body">
+        <!-- Profile Photo Upload -->
+        <div class="profile-avatar-editor">
+          <div class="avatar-large-wrap">
+            <img src="assets/icon.png" alt="Profile avatar" class="avatar-large" id="profileAvatarLarge">
+            <label for="avatarUploadInput" class="avatar-edit-badge" title="Upload new photo">
+              📷
+            </label>
+            <input type="file" id="avatarUploadInput" accept="image/*" class="file-input-hidden">
+          </div>
+          <div class="profile-title-group">
+            <h3 class="profile-display-name" id="profileDisplayName">User</h3>
+            <span class="profile-username" id="profileUsernameTag">@username</span>
+          </div>
+        </div>
+
+        <!-- Follow & Engagement Metrics -->
+        <div class="profile-stats-row">
+          <div class="pstat-item">
+            <span class="pstat-num" id="userFollowersCount">0</span>
+            <span class="pstat-label">Followers</span>
+          </div>
+          <div class="pstat-item">
+            <span class="pstat-num" id="userFollowingCount">0</span>
+            <span class="pstat-label">Following</span>
+          </div>
+          <div class="pstat-item">
+            <span class="pstat-num" id="userReactionsGivenCount">0</span>
+            <span class="pstat-label">Reactions</span>
+          </div>
+        </div>
+
+        <!-- Notification Preferences Form (Rule 33) -->
+        <div class="profile-settings-card">
+          <h4 class="settings-title">Notification Preferences</h4>
+          <label class="custom-checkbox">
+            <input type="checkbox" id="prefNewMeme" checked>
+            <span class="checkmark"></span>
+            New Meme Drops from LILLY MEMES 🔥
+          </label>
+          <label class="custom-checkbox">
+            <input type="checkbox" id="prefReplies" checked>
+            <span class="checkmark"></span>
+            Replies to your comments 💬
+          </label>
+          <label class="custom-checkbox">
+            <input type="checkbox" id="prefMotd" checked>
+            <span class="checkmark"></span>
+            Meme of the Day alerts 🏆
+          </label>
+        </div>
+
+        <button type="button" class="btn btn-primary btn-block" id="saveProfileSettingsBtn">Save Changes</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- TOAST NOTIFICATION CONTAINER (Real feedback messages) -->
+  <aside class="toast-container" id="toastContainer" aria-live="assertive" aria-atomic="true"></aside>
+
+</body>
+</html>
