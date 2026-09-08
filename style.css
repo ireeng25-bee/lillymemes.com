@@ -1866,7 +1866,8 @@ ul, ol {
   display: grid;
   grid-template-columns: 1.2fr 1fr;
   min-height: 520px;
-  max-height: 85vh;
+  height: min(85vh, 760px);
+  min-height: 0;
 }
 
 .meme-modal-media-col {
@@ -1897,6 +1898,8 @@ ul, ol {
   flex-direction: column;
   overflow-y: auto;
   gap: 18px;
+  min-height: 0;
+  overscroll-behavior: contain;
 }
 
 .meme-author-header {
@@ -2076,6 +2079,7 @@ ul, ol {
   flex-direction: column;
   gap: 12px;
   flex: 1;
+  min-height: 0;
 }
 
 .comments-heading {
@@ -2088,8 +2092,12 @@ ul, ol {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  max-height: 220px;
+  flex: 1 1 auto;
+  min-height: 120px;
+  max-height: none;
   overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .comment-row {
@@ -2110,6 +2118,27 @@ ul, ol {
   padding: 8px 12px;
   border-radius: var(--radius-md);
   flex: 1;
+}
+
+.comment-reply {
+  margin-left: 28px;
+  border-left: 3px solid var(--primary-purple-light);
+}
+
+.comment-reply-btn {
+  margin-top: 6px;
+  padding: 3px 0;
+  border: 0;
+  background: transparent;
+  color: var(--primary-purple);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.comment-reply-btn:hover,
+.comment-reply-btn:focus-visible {
+  text-decoration: underline;
 }
 
 .comment-author {
@@ -2149,6 +2178,22 @@ ul, ol {
   background: var(--bg-surface);
 }
 
+.refresh-reminder-modal {
+  width: min(92vw, 480px);
+  max-width: calc(100vw - 24px);
+  padding: 12px;
+}
+
+.refresh-reminder-content {
+  padding: 20px 24px calc(20px + env(safe-area-inset-bottom));
+  color: var(--text-muted);
+}
+
+.refresh-reminder-content p {
+  margin: 0;
+  line-height: 1.5;
+}
+
 /* Admin Modal & Drop Zone */
 .admin-form {
   padding: 24px;
@@ -2179,6 +2224,12 @@ ul, ol {
   width: 100%; height: 100%;
   opacity: 0;
   cursor: pointer;
+  z-index: 1;
+}
+
+.drop-zone-placeholder {
+  position: relative;
+  z-index: 2;
 }
 
 .drop-icon {
@@ -2190,6 +2241,7 @@ ul, ol {
   max-height: 200px;
   overflow: hidden;
   border-radius: var(--radius-sm);
+  z-index: 3;
 }
 
 .upload-preview-img {
@@ -2489,7 +2541,13 @@ body {
     grid-template-columns: var(--sidebar-left-width) minmax(0, 1fr);
   }
   .sidebar-right {
-    display: none;
+    display: contents;
+  }
+  .sidebar-right-inner {
+    display: contents;
+  }
+  .motd-spotlight-card {
+    grid-column: 2;
   }
   .trending-cards-grid,
   .memes-grid-container {
@@ -2525,10 +2583,31 @@ body {
     border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
   }
   .sidebar-right {
-    display: block;
+    display: contents;
     position: static;
     height: auto;
     overflow: visible;
+  }
+  .sidebar-right-inner {
+    display: contents;
+  }
+  .motd-spotlight-card {
+    grid-column: 1;
+    order: -1;
+    width: 100%;
+    min-width: 0;
+  }
+  .motd-media-wrap {
+    aspect-ratio: auto;
+    height: auto;
+    max-height: min(62vw, 430px);
+  }
+  .motd-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: min(62vw, 430px);
+    object-fit: contain;
   }
   .header-icon-btn.mobile-menu-btn {
     display: inline-flex;
@@ -2559,10 +2638,15 @@ body {
   }
   .meme-modal-grid {
     grid-template-columns: 1fr;
-    max-height: 90vh;
+    height: min(90vh, 760px);
+    min-height: 0;
   }
   .meme-modal-image {
     max-height: 40vh;
+  }
+  .meme-modal-info-col {
+    min-height: 0;
+    padding-bottom: calc(24px + env(safe-area-inset-bottom));
   }
   .mobile-bottom-nav {
     display: flex;

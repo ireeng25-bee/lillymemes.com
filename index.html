@@ -893,6 +893,22 @@
     </div>
   </dialog>
 
+  <dialog class="app-modal refresh-reminder-modal" id="refreshReminderModal" aria-labelledby="refreshReminderTitle">
+    <div class="modal-dialog refresh-reminder-card">
+      <div class="modal-header">
+        <h2 class="modal-title" id="refreshReminderTitle">Please refresh LILLY MEMES</h2>
+        <button type="button" class="modal-close-btn" id="closeRefreshReminderBtn" aria-label="Close refresh reminder">&times;</button>
+      </div>
+      <div class="refresh-reminder-content">
+        <p>For the latest features, improvements and updates, please refresh the app whenever you leave and come back.</p>
+        <div class="modal-footer-actions">
+          <button type="button" class="btn btn-outline-purple" id="laterRefreshBtn">Later</button>
+          <button type="button" class="btn btn-primary" id="refreshAppBtn">Refresh App</button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
   <!-- ADMIN CREATE / EDIT POST MODAL (Rule 11: Real Post Publishing) -->
   <dialog class="app-modal" id="adminPostModal" aria-labelledby="adminModalTitle">
     <div class="modal-dialog">
@@ -904,7 +920,7 @@
         <div class="form-group">
           <label class="form-label" for="memeImageFileInput">Meme Image *</label>
           <div class="file-drop-zone" id="memeFileDropZone">
-            <input type="file" id="memeImageFileInput" accept="image/png, image/jpeg, image/webp, image/gif" class="file-input" required>
+            <input type="file" id="memeImageFileInput" accept="image/*" class="file-input" required>
             <div class="drop-zone-placeholder" id="dropZonePrompt">
               <span class="drop-icon">📷</span>
               <p>Click or drag meme image here (PNG, JPG, WebP, GIF)</p>

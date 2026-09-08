@@ -651,6 +651,7 @@
             id,
             post_id,
             user_id,
+            parent_comment_id,
             content,
             is_pinned,
             likes_count,
@@ -671,7 +672,7 @@
     /**
      * Add a comment to a post
      */
-    async addComment(postId, userId, content) {
+    async addComment(postId, userId, content, parentCommentId = null) {
       if (!client) return { data: null, error: new Error('Client offline') };
 
       const trimmed = content.trim();
@@ -683,6 +684,7 @@
           .insert([{
             post_id: postId,
             user_id: userId,
+            parent_comment_id: parentCommentId,
             content: trimmed,
             is_pinned: false,
             likes_count: 0,
@@ -692,6 +694,7 @@
             id,
             post_id,
             user_id,
+            parent_comment_id,
             content,
             is_pinned,
             likes_count,

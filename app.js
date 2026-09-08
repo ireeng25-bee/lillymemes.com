@@ -169,6 +169,10 @@
     DOM.commentsHeaderCount = $('#commentsHeaderCount');
     DOM.commentSubmitForm = $('#commentSubmitForm');
     DOM.commentInputField = $('#commentInputField');
+    DOM.refreshReminderModal = $('#refreshReminderModal');
+    DOM.closeRefreshReminderBtn = $('#closeRefreshReminderBtn');
+    DOM.laterRefreshBtn = $('#laterRefreshBtn');
+    DOM.refreshAppBtn = $('#refreshAppBtn');
 
     // Admin Post Creation Modal
     DOM.adminPostModal = $('#adminPostModal');
@@ -324,6 +328,19 @@
       const authUser = session ? session.user : null;
       await handleUserSession(authUser);
     });
+  }
+
+  let appWasBackgrounded = false;
+
+  function handleAppVisibilityChange() {
+    if (document.visibilityState === 'hidden') {
+      appWasBackgrounded = true;
+      return;
+    }
+    if (document.visibilityState === 'visible' && appWasBackgrounded && DOM.refreshReminderModal && !DOM.refreshReminderModal.open) {
+      appWasBackgrounded = false;
+      openModal(DOM.refreshReminderModal);
+    }
   }
 
   async function handleUserSession(user) {
@@ -976,9 +993,9 @@
     if (DOM.commentsHeaderCount) DOM.commentsHeaderCount.textContent = String(comments.length);
     DOM.modalCommentsList.innerHTML = '';
 
-    comments.forEach(comment => {
+    const renderComment = (comment, isReply = false) => {
       const row = document.createElement('div');
-      row.className = 'comment-row';
+      row.className = isReply ? 'comment-row comment-reply' : 'comment-row';
 
       const avatar = (comment.profiles && comment.profiles.avatar_url) ? comment.profiles.avatar_url : 'assets/icon.png';
       const name = (comment.profiles && comment.profiles.display_name) ? comment.profiles.display_name : 'Member';
@@ -991,9 +1008,16 @@
           <div class="comment-author">${escapeHtml(name)}</div>
           <div class="comment-text">${escapeHtml(comment.content)}</div>
           <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">${timeAgo(comment.created_at)}</div>
+          <button type="button" class="comment-reply-btn" data-reply-comment="${escapeHtml(comment.id)}">Reply</button>
         </div>
       `;
       DOM.modalCommentsList.appendChild(row);
+      return row;
+    };
+
+    comments.filter(comment => !comment.parent_comment_id).forEach(comment => {
+      renderComment(comment);
+      comments.filter(reply => reply.parent_comment_id === comment.id).forEach(reply => renderComment(reply, true));
     });
   }
 
@@ -1026,6 +1050,40 @@
       loadPostComments(state.activePostId);
       showToast('Comment posted! 😂', 'success');
     }
+  }
+
+  async function handleCommentReplyClick(event) {
+    const button = event.target.closest('[data-reply-comment]');
+    if (!button || !DOM.modalCommentsList) return;
+    if (!state.currentUser) {
+      showToast('Please sign in to reply! 💬', 'info');
+      openModal(DOM.authModal);
+      return;
+    }
+
+    const existingForm = DOM.modalCommentsList.querySelector('.reply-input-form');
+    if (existingForm) existingForm.remove();
+    const form = document.createElement('form');
+    form.className = 'comment-input-form reply-input-form';
+    form.innerHTML = `<input class="comment-input" maxlength="500" placeholder="Write a reply..." required><button type="submit" class="btn btn-purple btn-sm">Reply</button>`;
+    button.closest('.comment-body').appendChild(form);
+    form.querySelector('input').focus();
+    form.addEventListener('submit', async (submitEvent) => {
+      submitEvent.preventDefault();
+      const input = form.querySelector('input');
+      const content = input.value.trim();
+      if (!content) return;
+      const submitButton = form.querySelector('button');
+      submitButton.disabled = true;
+      const { error } = await window.LillyDB.addComment(state.activePostId, state.currentUser.id, content, button.dataset.replyComment);
+      if (error) {
+        submitButton.disabled = false;
+        showToast(error.message || 'Could not post reply.', 'error');
+        return;
+      }
+      await loadPostComments(state.activePostId);
+      showToast('Reply posted! 💬', 'success');
+    });
   }
 
   /**
@@ -1213,6 +1271,12 @@
       return;
     }
 
+    const { data: sessionData } = await window.LillyDB.getSession();
+    if (!sessionData || !sessionData.session || !state.currentUser) {
+      showToast('Your session expired. Please sign in again.', 'error');
+      return;
+    }
+
     if (!selectedPostFile) {
       setPostImageError('Please select a meme image.');
       return;
@@ -1272,10 +1336,13 @@
       DOM.adminCreatePostForm.reset();
       clearPostFileSelection();
 
-      // Refresh Feeds
-      loadFeedMemes(true);
-      loadTrendingMemes();
-      if (isMotd) loadMemeOfTheDay();
+      // Refresh feeds after the database record already exists.
+      await Promise.allSettled([
+        loadFeedMemes(true),
+        loadTrendingMemes(),
+        loadForYouSection(),
+        isMotd ? loadMemeOfTheDay() : Promise.resolve()
+      ]);
     }
   }
 
@@ -1441,6 +1508,14 @@
   // =========================================================================
 
   function attachEventListeners() {
+    document.addEventListener('visibilitychange', handleAppVisibilityChange);
+    window.addEventListener('pageshow', (event) => {
+      if (event.persisted) handleAppVisibilityChange();
+    });
+    if (DOM.closeRefreshReminderBtn) DOM.closeRefreshReminderBtn.addEventListener('click', () => closeModal(DOM.refreshReminderModal));
+    if (DOM.laterRefreshBtn) DOM.laterRefreshBtn.addEventListener('click', () => closeModal(DOM.refreshReminderModal));
+    if (DOM.refreshAppBtn) DOM.refreshAppBtn.addEventListener('click', () => window.location.reload());
+
     if (DOM.mobileMenuBtn) {
       DOM.mobileMenuBtn.addEventListener('click', () => {
         setMobileMenuOpen(!DOM.sidebarLeft.classList.contains('mobile-menu-open'));
@@ -1591,6 +1666,7 @@
     // Reactions & Comments Handlers
     if (DOM.reactionsPicker) DOM.reactionsPicker.addEventListener('click', handleReactionClick);
     if (DOM.commentSubmitForm) DOM.commentSubmitForm.addEventListener('submit', handleCommentSubmit);
+    if (DOM.modalCommentsList) DOM.modalCommentsList.addEventListener('click', handleCommentReplyClick);
     if (DOM.modalSaveBtn) DOM.modalSaveBtn.addEventListener('click', handleToggleSave);
 
     // Share Buttons

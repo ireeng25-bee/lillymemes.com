@@ -104,14 +104,19 @@ CREATE TABLE IF NOT EXISTS public.comments (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     post_id UUID NOT NULL REFERENCES public.posts(id) ON DELETE CASCADE,
     user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    parent_comment_id UUID REFERENCES public.comments(id) ON DELETE CASCADE,
     content TEXT NOT NULL CHECK (char_length(content) > 0 AND char_length(content) <= 500),
     is_pinned BOOLEAN NOT NULL DEFAULT FALSE,
     likes_count INTEGER NOT NULL DEFAULT 0,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+ALTER TABLE public.comments
+    ADD COLUMN IF NOT EXISTS parent_comment_id UUID REFERENCES public.comments(id) ON DELETE CASCADE;
+
 CREATE INDEX IF NOT EXISTS idx_comments_post ON public.comments(post_id);
 CREATE INDEX IF NOT EXISTS idx_comments_pinned ON public.comments(is_pinned DESC);
+CREATE INDEX IF NOT EXISTS idx_comments_parent ON public.comments(parent_comment_id);
 
 -- ============================================================================
 -- 5. SAVED POSTS (BOOKMARKS) TABLE
