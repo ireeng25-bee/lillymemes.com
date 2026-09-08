@@ -143,6 +143,37 @@ CREATE TABLE IF NOT EXISTS public.notifications (
 CREATE INDEX IF NOT EXISTS idx_notifs_user ON public.notifications(user_id, is_read);
 
 -- ============================================================================
+-- 6B. WEB PUSH DEVICE SUBSCRIPTIONS
+-- ============================================================================
+-- One authenticated user may have a subscription for each browser/device.
+CREATE TABLE IF NOT EXISTS public.push_subscriptions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    endpoint TEXT NOT NULL UNIQUE,
+    p256dh TEXT NOT NULL,
+    auth TEXT NOT NULL,
+    user_agent TEXT,
+    enabled BOOLEAN NOT NULL DEFAULT TRUE,
+    new_meme_notifications BOOLEAN NOT NULL DEFAULT TRUE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_push_subscriptions_user_enabled
+    ON public.push_subscriptions(user_id, enabled);
+
+CREATE TABLE IF NOT EXISTS public.push_notification_deliveries (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    post_id UUID NOT NULL REFERENCES public.posts(id) ON DELETE CASCADE,
+    subscription_id UUID NOT NULL REFERENCES public.push_subscriptions(id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    CONSTRAINT unique_push_delivery UNIQUE (post_id, subscription_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_push_deliveries_post
+    ON public.push_notification_deliveries(post_id);
+
+-- ============================================================================
 -- 7. CHALLENGES & ENTRIES (Rule 27)
 -- ============================================================================
 CREATE TABLE IF NOT EXISTS public.challenges (
@@ -243,6 +274,8 @@ ALTER TABLE public.reactions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.comments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.saved_posts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.push_subscriptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.push_notification_deliveries ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.challenges ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.challenge_entries ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.stories ENABLE ROW LEVEL SECURITY;
@@ -331,6 +364,35 @@ CREATE POLICY "Users can view their own notifications"
 CREATE POLICY "Users can mark their own notifications as read"
     ON public.notifications FOR UPDATE
     USING (auth.uid() = user_id);
+
+-- ---------------- WEB PUSH SUBSCRIPTION POLICIES ----------------
+CREATE POLICY "Users can view their own push subscriptions"
+    ON public.push_subscriptions FOR SELECT
+    USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can register their own push subscriptions"
+    ON public.push_subscriptions FOR INSERT
+    WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update their own push subscriptions"
+    ON public.push_subscriptions FOR UPDATE
+    USING (auth.uid() = user_id)
+    WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can remove their own push subscriptions"
+    ON public.push_subscriptions FOR DELETE
+    USING (auth.uid() = user_id);
+
+-- Delivery records are written only by the trusted server-side dispatcher.
+CREATE POLICY "Users can view their own push delivery records"
+        ON public.push_notification_deliveries FOR SELECT
+        USING (
+            EXISTS (
+                SELECT 1 FROM public.push_subscriptions
+                WHERE push_subscriptions.id = push_notification_deliveries.subscription_id
+                    AND push_subscriptions.user_id = auth.uid()
+            )
+        );
 
 -- ---------------- STORIES & QUOTES & CHALLENGES POLICIES ----------------
 CREATE POLICY "Content viewable by everyone"

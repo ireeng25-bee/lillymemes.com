@@ -116,6 +116,9 @@
     // Mobile FAB
     DOM.mobileActionFab = $('#mobileActionFab');
     DOM.mobNavProfile = $('#mobNavProfile');
+    DOM.mobileMenuBtn = $('#mobileMenuBtn');
+    DOM.mobileMenuBackdrop = $('#mobileMenuBackdrop');
+    DOM.sidebarLeft = $('#sidebarLeft');
 
     // Auth Modal
     DOM.authModal = $('#authModal');
@@ -183,6 +186,7 @@
     DOM.postHashtags = $('#postHashtags');
     DOM.postIsFeatured = $('#postIsFeatured');
     DOM.postIsMotd = $('#postIsMotd');
+    DOM.postSendNotification = $('#postSendNotification');
     DOM.postImageError = $('#postImageError');
 
     // Profile Modal
@@ -196,6 +200,7 @@
     DOM.userFollowingCount = $('#userFollowingCount');
     DOM.userReactionsGivenCount = $('#userReactionsGivenCount');
     DOM.saveProfileSettingsBtn = $('#saveProfileSettingsBtn');
+    DOM.prefNewMeme = $('#prefNewMeme');
 
     // Toast Container
     DOM.toastContainer = $('#toastContainer');
@@ -346,6 +351,7 @@
       loadUserSavedMemes();
       // Load Notifications
       loadNotifications();
+      restoreNewMemeNotificationPreference(user);
     } else {
       state.currentProfile = null;
       state.isAdmin = false;
@@ -466,9 +472,202 @@
     showToast('Logged out successfully. See you soon!', 'info');
   }
 
+  async function getPushVapidPublicKey() {
+    if (window.LILLY_ENV && window.LILLY_ENV.PUSH_VAPID_PUBLIC_KEY) {
+      return window.LILLY_ENV.PUSH_VAPID_PUBLIC_KEY;
+    }
+
+    try {
+      const response = await fetch('/api/push-config', { headers: { Accept: 'application/json' } });
+      if (!response.ok) return '';
+      const config = await response.json();
+      return config.publicKey || '';
+    } catch (error) {
+      return '';
+    }
+  }
+
+  function urlBase64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+    const rawData = window.atob(base64);
+    return Uint8Array.from([...rawData].map(character => character.charCodeAt(0)));
+  }
+
+  async function enableNewMemeNotifications() {
+    if (!state.currentUser || !DOM.prefNewMeme) return false;
+
+    if (!('Notification' in window) || !('serviceWorker' in navigator) || !('PushManager' in window)) {
+      DOM.prefNewMeme.checked = false;
+      showToast('Push notifications are not supported in this browser.', 'info');
+      return false;
+    }
+
+    const vapidPublicKey = await getPushVapidPublicKey();
+    if (!vapidPublicKey) {
+      DOM.prefNewMeme.checked = false;
+      showToast('Notifications are not configured for this deployment yet.', 'info');
+      return false;
+    }
+
+    const permission = Notification.permission === 'default'
+      ? await Notification.requestPermission()
+      : Notification.permission;
+
+    if (permission !== 'granted') {
+      DOM.prefNewMeme.checked = false;
+      showToast(permission === 'denied'
+        ? 'Notifications are blocked in this browser.'
+        : 'Notification permission was not granted.', 'info');
+      return false;
+    }
+
+    try {
+      const registration = await navigator.serviceWorker.ready;
+      let subscription = await registration.pushManager.getSubscription();
+      if (!subscription) {
+        subscription = await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(vapidPublicKey)
+        });
+      }
+
+      const { error } = await window.LillyDB.savePushSubscription(
+        state.currentUser.id,
+        subscription,
+        navigator.userAgent
+      );
+      if (error) throw error;
+
+      showToast('New meme notifications enabled.', 'success');
+      return true;
+    } catch (error) {
+      DOM.prefNewMeme.checked = false;
+      console.warn('[PWA] Push subscription failed:', error);
+      showToast('Could not enable notifications. Please try again later.', 'error');
+      return false;
+    }
+  }
+
+  async function disableNewMemeNotifications() {
+    if (!state.currentUser || !DOM.prefNewMeme || !('serviceWorker' in navigator)) return;
+
+    try {
+      const registration = await navigator.serviceWorker.ready;
+      const subscription = await registration.pushManager.getSubscription();
+      if (subscription) {
+        await window.LillyDB.setPushPreference(state.currentUser.id, subscription.endpoint, false);
+      }
+      showToast('New meme notifications disabled.', 'info');
+    } catch (error) {
+      DOM.prefNewMeme.checked = true;
+      showToast('Could not update notification preferences.', 'error');
+    }
+  }
+
+  async function restoreNewMemeNotificationPreference(user) {
+    if (!DOM.prefNewMeme) return;
+    DOM.prefNewMeme.checked = false;
+    if (!user || !('serviceWorker' in navigator) || !('PushManager' in window)) return;
+
+    try {
+      const registration = await navigator.serviceWorker.ready;
+      const subscription = await registration.pushManager.getSubscription();
+      if (!subscription) return;
+      const { data } = await window.LillyDB.getPushPreference(user.id, subscription.endpoint);
+      DOM.prefNewMeme.checked = Boolean(data && data.enabled && data.new_meme_notifications);
+    } catch (error) {
+      DOM.prefNewMeme.checked = false;
+    }
+  }
+
+  async function dispatchNewMemePushNotification(postId) {
+    if (!postId || !DOM.postSendNotification || !DOM.postSendNotification.checked) return;
+
+    const { data: sessionData, error: sessionError } = await window.LillyDB.getSession();
+    const accessToken = sessionData && sessionData.session ? sessionData.session.access_token : '';
+    if (sessionError || !accessToken) {
+      showToast('Meme published, but notification dispatch could not be authorized.', 'info');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/notify-new-meme', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ postId })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Notification endpoint returned ${response.status}`);
+      }
+    } catch (error) {
+      console.warn('[PWA] New meme push dispatch failed:', error);
+      showToast('Meme published, but push notifications could not be sent.', 'info');
+    }
+  }
+
   // =========================================================================
   // MEME FEED RENDERING & CONTENT CONTROLLER
   // =========================================================================
+
+  function getMemeDownloadFilename(imageUrl, postId) {
+    try {
+      const pathname = new URL(imageUrl, window.location.href).pathname;
+      const extensionMatch = pathname.match(/\.([a-z0-9]+)$/i);
+      const extension = extensionMatch ? extensionMatch[1].toLowerCase() : 'jpg';
+      return `lilly-memes-meme-${postId}.${extension}`;
+    } catch (error) {
+      return `lilly-memes-meme-${postId}.jpg`;
+    }
+  }
+
+  function handleMemeDownload(event, imageUrl, postId) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (!imageUrl) {
+      showToast('Meme image is unavailable.', 'error');
+      return;
+    }
+
+    if (isIOSDevice()) {
+      window.open(imageUrl, '_blank', 'noopener,noreferrer');
+      showToast('Image opened. Use your browser Share menu to save it.', 'info');
+      return;
+    }
+
+    const downloadLink = document.createElement('a');
+    downloadLink.href = imageUrl;
+    downloadLink.download = getMemeDownloadFilename(imageUrl, postId);
+    downloadLink.rel = 'noopener';
+    document.body.appendChild(downloadLink);
+    downloadLink.click();
+    downloadLink.remove();
+  }
+
+  function appendMemeDownloadButton(container, post) {
+    if (!container || !post || !post.image_url || !post.id) return;
+
+    const actions = document.createElement('div');
+    actions.className = 'meme-card-actions';
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'meme-download-btn';
+    button.title = 'Download meme';
+    button.setAttribute('aria-label', 'Download meme');
+    button.innerHTML = `
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path d="M12 3v11m0 0 4-4m-4 4-4-4M5 20h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+    `;
+    button.addEventListener('click', (event) => handleMemeDownload(event, post.image_url, post.id));
+    actions.appendChild(button);
+    container.appendChild(actions);
+  }
 
   /**
    * Load Trending Memes (Numbered Badges 1-4, Reference Design)
@@ -509,6 +708,7 @@
           </div>
         </div>
       `;
+      appendMemeDownloadButton(card.querySelector('.meme-card-info'), post);
 
       card.addEventListener('click', () => openMemeDetail(post.id));
       DOM.trendingCardsContainer.appendChild(card);
@@ -572,6 +772,7 @@
           </div>
         </div>
       `;
+      appendMemeDownloadButton(card.querySelector('.meme-card-info'), post);
 
       card.addEventListener('click', () => openMemeDetail(post.id));
       DOM.memesFeedContainer.appendChild(card);
@@ -607,6 +808,10 @@
     if (DOM.motdLikes) DOM.motdLikes.textContent = formatNumber(motd.reactions_count);
     if (DOM.motdComments) DOM.motdComments.textContent = formatNumber(motd.comments_count);
 
+    const existingMotdDownload = DOM.motdCard.querySelector('.meme-card-actions');
+    if (existingMotdDownload) existingMotdDownload.remove();
+    appendMemeDownloadButton(DOM.motdCard.querySelector('.motd-body'), motd);
+
     DOM.motdCard.onclick = () => openMemeDetail(motd.id);
   }
 
@@ -632,6 +837,7 @@
           <h4 class="meme-card-caption">${escapeHtml(post.caption)}</h4>
         </div>
       `;
+      appendMemeDownloadButton(card.querySelector('.meme-card-info'), post);
       card.addEventListener('click', () => openMemeDetail(post.id));
       DOM.forYouCardsContainer.appendChild(card);
     });
@@ -904,31 +1110,96 @@
   // =========================================================================
 
   let selectedPostFile = null;
+  let selectedPostPreviewUrl = null;
+  const MAX_MEME_FILE_SIZE = 10 * 1024 * 1024;
+  const SUPPORTED_MEME_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
+
+  function formatFileSize(bytes) {
+    if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  }
+
+  function getFileType(file) {
+    if (file.type) return file.type;
+    const extension = file.name.split('.').pop().toLowerCase();
+    const extensionTypes = {
+      jpg: 'image/jpeg',
+      jpeg: 'image/jpeg',
+      png: 'image/png',
+      webp: 'image/webp',
+      gif: 'image/gif'
+    };
+    return extensionTypes[extension] || '';
+  }
+
+  function setPostImageError(message) {
+    if (!DOM.postImageError) return;
+    DOM.postImageError.textContent = message;
+    DOM.postImageError.classList.toggle('visible', Boolean(message));
+  }
+
+  function updateMemePreviewDetails(file) {
+    let details = DOM.imagePreviewWrap.querySelector('.upload-preview-details');
+    if (!details) {
+      details = document.createElement('div');
+      details.className = 'upload-preview-details';
+      DOM.imagePreviewWrap.appendChild(details);
+    }
+
+    const typeLabel = getFileType(file).replace('image/', '').toUpperCase();
+    details.innerHTML = `
+      <strong class="upload-preview-name"></strong>
+      <span class="upload-preview-meta"></span>
+      <span class="upload-preview-ready">✓ Image selected and ready to publish.</span>
+    `;
+    details.querySelector('.upload-preview-name').textContent = file.name;
+    details.querySelector('.upload-preview-meta').textContent = `${typeLabel} • ${formatFileSize(file.size)}`;
+  }
 
   function handleMemeFileSelect(file) {
     if (!file) return;
 
-    if (!file.type.startsWith('image/')) {
-      DOM.postImageError.textContent = 'Please select a valid image (PNG, JPG, WebP, GIF).';
-      DOM.postImageError.classList.add('visible');
+    const fileType = getFileType(file);
+    if (!SUPPORTED_MEME_TYPES.has(fileType)) {
+      selectedPostFile = null;
+      if (DOM.memeImageFileInput) DOM.memeImageFileInput.value = '';
+      setPostImageError('Please select a supported image format.');
       return;
     }
 
-    DOM.postImageError.classList.remove('visible');
-    selectedPostFile = file;
+    if (file.size > MAX_MEME_FILE_SIZE) {
+      selectedPostFile = null;
+      if (DOM.memeImageFileInput) DOM.memeImageFileInput.value = '';
+      setPostImageError('Image is too large. Please choose a smaller image.');
+      return;
+    }
 
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      DOM.memeUploadPreview.src = e.target.result;
+    if (selectedPostPreviewUrl) URL.revokeObjectURL(selectedPostPreviewUrl);
+    selectedPostFile = file;
+    selectedPostPreviewUrl = URL.createObjectURL(file);
+    setPostImageError('');
+    updateMemePreviewDetails(file);
+    DOM.memeUploadPreview.alt = `Preview of ${file.name}`;
+    DOM.memeUploadPreview.onload = () => {
       DOM.imagePreviewWrap.hidden = false;
       DOM.dropZonePrompt.hidden = true;
     };
-    reader.readAsDataURL(file);
+    DOM.memeUploadPreview.onerror = () => {
+      setPostImageError('Unable to preview this image. Please choose another file.');
+      clearPostFileSelection();
+    };
+    DOM.memeUploadPreview.src = selectedPostPreviewUrl;
   }
 
   function clearPostFileSelection() {
     selectedPostFile = null;
+    if (selectedPostPreviewUrl) {
+      URL.revokeObjectURL(selectedPostPreviewUrl);
+      selectedPostPreviewUrl = null;
+    }
     DOM.memeImageFileInput.value = '';
+    DOM.memeUploadPreview.onload = null;
+    DOM.memeUploadPreview.onerror = null;
     DOM.memeUploadPreview.src = '';
     DOM.imagePreviewWrap.hidden = true;
     DOM.dropZonePrompt.hidden = false;
@@ -943,8 +1214,7 @@
     }
 
     if (!selectedPostFile) {
-      DOM.postImageError.textContent = 'Meme image is required.';
-      DOM.postImageError.classList.add('visible');
+      setPostImageError('Please select a meme image.');
       return;
     }
 
@@ -961,7 +1231,8 @@
 
     const submitBtn = $('#submitPublishMemeBtn');
     submitBtn.disabled = true;
-    submitBtn.innerHTML = '<span class="btn-text">Uploading & Publishing... 🔥</span>';
+    submitBtn.innerHTML = '<span class="btn-text">Uploading meme... 🔥</span>';
+    setPostImageError('');
 
     // 1. Real Upload to Supabase Storage Bucket 'memes'
     const { data: uploadData, error: uploadError } = await window.LillyDB.uploadMemeImage(
@@ -975,6 +1246,8 @@
       showToast(uploadError ? uploadError.message : 'Image upload failed.', 'error');
       return;
     }
+
+    submitBtn.innerHTML = '<span class="btn-text">Publishing meme... 🔥</span>';
 
     // 2. Real Record Insert to Supabase Database 'posts'
     const { data: postRecord, error: postError } = await window.LillyDB.createPost({
@@ -994,6 +1267,7 @@
       showToast(postError.message || 'Failed to save post.', 'error');
     } else {
       showToast('Meme published successfully! 😂🔥', 'success');
+      await dispatchNewMemePushNotification(postRecord && postRecord.id);
       closeModal(DOM.adminPostModal);
       DOM.adminCreatePostForm.reset();
       clearPostFileSelection();
@@ -1134,6 +1408,11 @@
     }
   }
 
+  function openMemeFromUrl() {
+    const match = window.location.hash.match(/^#meme-(.+)$/);
+    if (match) openMemeDetail(decodeURIComponent(match[1]));
+  }
+
   /**
    * Random Meme Surprise Me Action
    */
@@ -1147,11 +1426,39 @@
     }
   }
 
+  function setMobileMenuOpen(isOpen) {
+    if (!DOM.sidebarLeft || !DOM.mobileMenuBtn || !DOM.mobileMenuBackdrop) return;
+
+    DOM.sidebarLeft.classList.toggle('mobile-menu-open', isOpen);
+    DOM.mobileMenuBtn.setAttribute('aria-expanded', String(isOpen));
+    DOM.mobileMenuBtn.setAttribute('aria-label', isOpen ? 'Close navigation menu' : 'Open navigation menu');
+    DOM.mobileMenuBackdrop.hidden = !isOpen;
+    document.body.classList.toggle('mobile-menu-is-open', isOpen);
+  }
+
   // =========================================================================
   // EVENT LISTENERS BINDING
   // =========================================================================
 
   function attachEventListeners() {
+    if (DOM.mobileMenuBtn) {
+      DOM.mobileMenuBtn.addEventListener('click', () => {
+        setMobileMenuOpen(!DOM.sidebarLeft.classList.contains('mobile-menu-open'));
+      });
+    }
+
+    if (DOM.mobileMenuBackdrop) {
+      DOM.mobileMenuBackdrop.addEventListener('click', () => setMobileMenuOpen(false));
+    }
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') setMobileMenuOpen(false);
+    });
+
+    DOM.navLinks.forEach(link => {
+      link.addEventListener('click', () => setMobileMenuOpen(false));
+    });
+
     // Auth Modal Triggers
     if (DOM.openLoginBtn) {
       DOM.openLoginBtn.addEventListener('click', () => {
@@ -1192,6 +1499,17 @@
     if (DOM.loginForm) DOM.loginForm.addEventListener('submit', handleLoginSubmit);
     if (DOM.registerForm) DOM.registerForm.addEventListener('submit', handleRegisterSubmit);
     if (DOM.logoutBtn) DOM.logoutBtn.addEventListener('click', handleLogout);
+
+    if (DOM.prefNewMeme) {
+      DOM.prefNewMeme.checked = false;
+      DOM.prefNewMeme.addEventListener('change', async () => {
+        if (DOM.prefNewMeme.checked) {
+          await enableNewMemeNotifications();
+        } else {
+          await disableNewMemeNotifications();
+        }
+      });
+    }
 
     // User Menu Toggle
     if (DOM.userMenuBtn) {
@@ -1244,6 +1562,7 @@
     // Left Sidebar Category Links
     DOM.sidebarCategoryLinks.forEach(link => {
       link.addEventListener('click', () => {
+        setMobileMenuOpen(false);
         const cat = link.dataset.category;
         state.currentCategory = cat;
         // Update quick cat card active state if matches
@@ -1416,6 +1735,130 @@
   }
 
   // =========================================================================
+  // PWA INSTALLATION CONTROLLER
+  // =========================================================================
+
+  let deferredInstallPrompt = null;
+  let installButton = null;
+  let iosInstallDialog = null;
+  let installConfirmationShown = false;
+
+  function isAppInstalled() {
+    return window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+  }
+
+  function isIOSDevice() {
+    return /iPad|iPhone|iPod/.test(window.navigator.userAgent)
+      || (window.navigator.platform === 'MacIntel' && window.navigator.maxTouchPoints > 1);
+  }
+
+  function createIOSInstallDialog() {
+    const dialog = document.createElement('dialog');
+    dialog.className = 'app-modal pwa-install-dialog';
+    dialog.setAttribute('aria-labelledby', 'pwaInstallTitle');
+    dialog.innerHTML = `
+      <div class="modal-dialog pwa-install-card">
+        <div class="modal-header">
+          <h2 class="modal-title" id="pwaInstallTitle">📲 Install LILLY MEMES</h2>
+          <button type="button" class="modal-close-btn" data-pwa-close aria-label="Close installation instructions">&times;</button>
+        </div>
+        <div class="pwa-install-content">
+          <p>Install LILLY MEMES on your iPhone or iPad:</p>
+          <ol>
+            <li>Tap the browser <strong>Share</strong> button.</li>
+            <li>Choose <strong>Add to Home Screen</strong>.</li>
+            <li>Tap <strong>Add</strong>.</li>
+          </ol>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(dialog);
+    dialog.querySelector('[data-pwa-close]').addEventListener('click', () => dialog.close());
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) dialog.close();
+    });
+    return dialog;
+  }
+
+  function updateInstallButton() {
+    if (!installButton) return;
+
+    if (isAppInstalled()) {
+      installButton.hidden = true;
+      return;
+    }
+
+    const canUseNativePrompt = Boolean(deferredInstallPrompt);
+    const canUseIOSInstructions = isIOSDevice();
+    installButton.hidden = !canUseNativePrompt && !canUseIOSInstructions;
+    installButton.textContent = '📲 Install App';
+    installButton.disabled = false;
+  }
+
+  async function handleInstallButtonClick() {
+    if (isAppInstalled()) {
+      installButton.hidden = true;
+      return;
+    }
+
+    if (deferredInstallPrompt) {
+      const promptEvent = deferredInstallPrompt;
+      deferredInstallPrompt = null;
+      promptEvent.prompt();
+      const choice = await promptEvent.userChoice;
+      if (choice.outcome === 'accepted') {
+        installConfirmationShown = true;
+        showToast('🎉 LILLY MEMES has been installed!', 'success');
+      } else {
+        showToast('Installation was dismissed. You can try again whenever you are ready.', 'info');
+      }
+      updateInstallButton();
+      return;
+    }
+
+    if (isIOSDevice() && iosInstallDialog) {
+      iosInstallDialog.showModal();
+      return;
+    }
+
+    showToast('App installation is not currently available in this browser.', 'info');
+  }
+
+  function initPwaInstallUI() {
+    if (isAppInstalled()) return;
+
+    const headerActions = document.querySelector('.header-actions');
+    if (!headerActions || document.getElementById('installAppBtn')) return;
+
+    installButton = document.createElement('button');
+    installButton.type = 'button';
+    installButton.id = 'installAppBtn';
+    installButton.className = 'btn btn-sm btn-pink pwa-install-btn';
+    installButton.textContent = '📲 Install App';
+    installButton.setAttribute('aria-label', 'Install LILLY MEMES as an app');
+    installButton.addEventListener('click', handleInstallButtonClick);
+    headerActions.insertBefore(installButton, headerActions.firstElementChild);
+
+    iosInstallDialog = createIOSInstallDialog();
+    updateInstallButton();
+
+    window.addEventListener('beforeinstallprompt', (event) => {
+      event.preventDefault();
+      deferredInstallPrompt = event;
+      updateInstallButton();
+    });
+
+    window.addEventListener('appinstalled', () => {
+      deferredInstallPrompt = null;
+      if (installButton) installButton.hidden = true;
+      if (!installConfirmationShown) {
+        showToast('🎉 LILLY MEMES has been installed!', 'success');
+      }
+      installConfirmationShown = false;
+    });
+  }
+
+  // =========================================================================
   // SERVICE WORKER & PWA REGISTRATION (Rule 22)
   // =========================================================================
 
@@ -1439,6 +1882,7 @@
 
   function initApp() {
     initDOMElements();
+    initPwaInstallUI();
     updateGreetingBanner();
     attachEventListeners();
     checkAuthSession();
@@ -1448,6 +1892,7 @@
     loadFeedMemes(true);
     loadMemeOfTheDay();
     loadForYouSection();
+    openMemeFromUrl();
 
     // Register Progressive Web App service worker
     registerServiceWorker();

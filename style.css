@@ -167,6 +167,7 @@ ul, ol {
   grid-template-columns: var(--sidebar-left-width) 1fr auto;
   align-items: center;
   gap: 24px;
+  min-width: 0;
 }
 
 /* Brand Link */
@@ -223,6 +224,7 @@ ul, ol {
   max-width: 580px;
   width: 100%;
   margin: 0 auto;
+  min-width: 0;
 }
 
 .search-container .search-icon {
@@ -305,10 +307,34 @@ ul, ol {
   align-items: center;
   gap: 18px;
   justify-content: flex-end;
+  min-width: 0;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+
+.header-icon-btn.mobile-menu-btn {
+  display: none;
+}
+
+.mobile-menu-backdrop {
+  display: none;
+}
+
+.pwa-install-btn {
+  white-space: nowrap;
+  min-height: 42px;
+  flex: 0 0 auto;
 }
 
 .notification-wrapper {
   position: relative;
+  flex: 0 0 auto;
+}
+
+.auth-area,
+.guest-actions,
+.user-menu-wrapper {
+  flex: 0 0 auto;
 }
 
 .header-icon-btn {
@@ -917,6 +943,12 @@ ul, ol {
   font-weight: 800;
   color: var(--text-main);
   letter-spacing: -0.3px;
+.settings-helper-text {
+  margin: -4px 0 12px;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
 }
 
 .section-subtitle {
@@ -1037,6 +1069,47 @@ ul, ol {
   display: flex;
   align-items: center;
   gap: 4px;
+}
+
+.meme-card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.meme-download-btn {
+  width: 36px;
+  height: 36px;
+  padding: 8px;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-pill);
+  background: var(--bg-surface);
+  color: var(--primary-purple);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition-fast);
+}
+
+.meme-download-btn svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+.meme-download-btn:hover,
+.meme-download-btn:focus-visible {
+  color: var(--text-white);
+  background: var(--primary-purple);
+  border-color: var(--primary-purple);
+  outline: none;
+}
+
+.meme-download-btn:active {
+  transform: scale(0.94);
 }
 
 /* Latest Memes Feed (4-Column Grid) */
@@ -1554,6 +1627,35 @@ ul, ol {
   overflow: hidden;
   position: relative;
   animation: modalScaleIn 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pwa-install-dialog {
+  width: min(92vw, 440px);
+  max-width: calc(100vw - 24px);
+  padding: 12px;
+}
+
+.pwa-install-card {
+  max-width: 440px;
+}
+
+.pwa-install-content {
+  padding: 20px 24px calc(20px + env(safe-area-inset-bottom));
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+}
+
+.pwa-install-content p {
+  margin: 0 0 16px;
+}
+
+.pwa-install-content ol {
+  margin: 0;
+  padding-left: 22px;
+}
+
+.pwa-install-content li + li {
+  margin-top: 10px;
 }
 
 @keyframes modalScaleIn {
@@ -2304,6 +2406,75 @@ ul, ol {
   animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.developer-footer {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 52px;
+  padding: 8px max(24px, env(safe-area-inset-right)) 8px max(24px, env(safe-area-inset-left));
+  background: rgba(10, 17, 40, 0.97);
+  border-top: 1px solid var(--navy-border);
+  color: var(--text-white);
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.16);
+}
+
+.developer-footer-copy,
+.developer-footer-links {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.developer-footer-copy {
+  flex-wrap: wrap;
+  font-size: 0.78rem;
+}
+
+.developer-footer-copy strong {
+  color: var(--text-white);
+}
+
+.developer-footer-copy span {
+  color: #CBD5E1;
+}
+
+.developer-footer-links {
+  flex-shrink: 0;
+  font-size: 0.78rem;
+}
+
+.developer-footer a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #E9D5FF;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.developer-contact-icon {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+}
+
+.developer-footer a:hover,
+.developer-footer a:focus-visible {
+  color: var(--text-white);
+  text-decoration: underline;
+}
+
+body {
+  padding-bottom: 68px;
+}
+
 @keyframes toastIn {
   from { opacity: 0; transform: translateY(16px); }
   to { opacity: 1; transform: translateY(0); }
@@ -2333,7 +2504,48 @@ ul, ol {
     padding: 16px;
   }
   .sidebar-left {
+    display: block;
+    position: fixed;
+    top: calc(var(--header-height) + env(safe-area-inset-top));
+    left: 0;
+    width: min(88vw, 320px);
+    height: calc(100dvh - var(--header-height) - env(safe-area-inset-top));
+    padding: 12px 0 env(safe-area-inset-bottom);
+    overflow-y: auto;
+    background: var(--bg-page);
+    transform: translateX(-105%);
+    transition: transform 0.25s ease;
+    z-index: 1200;
+  }
+  .sidebar-left.mobile-menu-open {
+    transform: translateX(0);
+  }
+  .sidebar-left .sidebar-inner {
+    min-height: 100%;
+    border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+  }
+  .sidebar-right {
+    display: block;
+    position: static;
+    height: auto;
+    overflow: visible;
+  }
+  .header-icon-btn.mobile-menu-btn {
+    display: inline-flex;
+    flex-shrink: 0;
+  }
+  .mobile-menu-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 17, 40, 0.58);
+    z-index: 1100;
+  }
+  .mobile-menu-backdrop[hidden] {
     display: none;
+  }
+  body.mobile-menu-is-open {
+    overflow: hidden;
   }
   .trending-cards-grid,
   .memes-grid-container {
@@ -2356,7 +2568,11 @@ ul, ol {
     display: flex;
   }
   body {
-    padding-bottom: 74px;
+    padding-bottom: 154px;
+  }
+
+  .developer-footer {
+    bottom: calc(64px + env(safe-area-inset-bottom));
   }
 }
 
@@ -2366,9 +2582,35 @@ ul, ol {
     --header-height: 60px;
   }
   .header-inner {
-    grid-template-columns: auto 1fr auto;
-    padding: 0 14px;
-    gap: 12px;
+    grid-template-columns: 32px minmax(72px, 1fr) auto;
+    padding-inline: max(8px, env(safe-area-inset-left)) max(8px, env(safe-area-inset-right));
+    gap: 8px;
+  }
+
+  .developer-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    min-height: 78px;
+    padding: 8px max(12px, env(safe-area-inset-right)) 8px max(12px, env(safe-area-inset-left));
+  }
+  .developer-footer-copy,
+  .developer-footer-links {
+    width: 100%;
+    gap: 8px 12px;
+  }
+  .developer-footer-copy {
+    font-size: 0.72rem;
+  }
+  .developer-footer-links {
+    flex-wrap: wrap;
+    font-size: 0.7rem;
+  }
+  .brand-link {
+    width: 32px;
+    min-width: 32px;
+    gap: 6px;
+    overflow: hidden;
   }
   .brand-subtext {
     display: none;
@@ -2377,15 +2619,127 @@ ul, ol {
     font-size: 1.15rem;
   }
   .brand-logo-img {
-    height: 34px;
+    width: 32px;
+    height: 32px;
+    flex: 0 0 32px;
   }
   .search-container {
     max-width: none;
+    min-width: 72px;
+    margin: 0;
   }
   .search-input {
     padding: 8px 12px 8px 36px;
     font-size: 0.85rem;
+    min-width: 0;
+    text-overflow: ellipsis;
   }
+
+  .meme-card-actions {
+    justify-content: stretch;
+  }
+
+  .meme-download-btn {
+    width: 40px;
+    height: 40px;
+    padding: 10px;
+  }
+  .header-actions {
+    gap: 6px;
+    min-width: max-content;
+  }
+  .header-icon-btn,
+  .header-icon-btn.mobile-menu-btn {
+    width: 40px;
+    height: 40px;
+    flex: 0 0 40px;
+  }
+  .pwa-install-btn {
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    min-height: 40px;
+    padding: 0;
+    font-size: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .pwa-install-btn::before {
+    content: '📲';
+    font-size: 1rem;
+  }
+  .guest-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .guest-actions .btn {
+    min-height: 40px;
+    padding: 0 7px;
+    font-size: 0.7rem;
+  }
+  .user-name-text,
+  .user-menu-wrapper .dropdown-caret {
+    display: none;
+  }
+  .user-pill-btn {
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    padding: 3px;
+    justify-content: center;
+  }
+
+  .guest-actions .btn {
+    width: 34px;
+    min-width: 34px;
+    padding: 0;
+    font-size: 0;
+  }
+
+  .guest-actions .btn-outline-light::before {
+    content: '↪';
+    font-size: 1rem;
+  }
+
+  .guest-actions .btn-pink::before {
+    content: '+';
+    font-size: 1.1rem;
+  }
+
+  @media (max-width: 340px) {
+    .header-inner {
+      grid-template-columns: 28px minmax(56px, 1fr) auto;
+      gap: 6px;
+    }
+    .brand-link,
+    .brand-logo-img {
+      width: 28px;
+      min-width: 28px;
+      height: 28px;
+      flex-basis: 28px;
+    }
+    .header-actions {
+      gap: 2px;
+    }
+    .header-icon-btn,
+    .header-icon-btn.mobile-menu-btn,
+    .pwa-install-btn,
+    .user-pill-btn {
+      width: 38px;
+      min-width: 38px;
+      height: 38px;
+      min-height: 38px;
+      flex-basis: 38px;
+    }
+    .guest-actions .btn {
+      width: 32px;
+      min-width: 32px;
+      min-height: 38px;
+    }
+  }
+
   .greeting-banner {
     padding: 20px;
     flex-direction: column;

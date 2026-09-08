@@ -6,7 +6,7 @@
  * ============================================================================
  */
 
-const CACHE_NAME = 'lilly-memes-v1.0.0';
+const CACHE_NAME = 'lilly-memes-v1.0.5';
 
 // Core Application Shell Assets to Pre-cache
 const STATIC_ASSETS = [
@@ -16,6 +16,7 @@ const STATIC_ASSETS = [
   './app.js',
   './supabase.js',
   './manifest.json',
+  './assets/appicon.png',
   './assets/icon.png',
   './assets/logo.png',
   'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.8/dist/umd/supabase.min.js',
@@ -111,8 +112,8 @@ self.addEventListener('push', (event) => {
   let notificationData = {
     title: '😂 New meme just dropped!',
     body: 'LILLY MEMES just posted something new. Come have a laugh! 🔥',
-    icon: 'assets/icon.png',
-    badge: 'assets/icon.png',
+    icon: './assets/appicon.png',
+    badge: './assets/appicon.png',
     data: {
       url: './'
     }
@@ -124,8 +125,8 @@ self.addEventListener('push', (event) => {
       notificationData = {
         title: parsed.title || notificationData.title,
         body: parsed.body || notificationData.body,
-        icon: parsed.icon || 'assets/icon.png',
-        badge: parsed.badge || 'assets/icon.png',
+        icon: parsed.icon || './assets/appicon.png',
+        badge: parsed.badge || './assets/appicon.png',
         data: {
           url: parsed.url || parsed.link || './'
         }
@@ -165,6 +166,7 @@ self.addEventListener('notificationclick', (event) => {
   const targetUrl = (event.notification.data && event.notification.data.url) 
     ? event.notification.data.url 
     : './';
+  const absoluteTargetUrl = new URL(targetUrl, self.location.origin).href;
 
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true })
@@ -173,13 +175,13 @@ self.addEventListener('notificationclick', (event) => {
         for (let i = 0; i < windowClients.length; i++) {
           const client = windowClients[i];
           if (client.url.includes(self.location.origin) && 'focus' in client) {
-            client.navigate(targetUrl);
+            client.navigate(absoluteTargetUrl);
             return client.focus();
           }
         }
         // Open new window if none is currently active
         if (clients.openWindow) {
-          return clients.openWindow(targetUrl);
+          return clients.openWindow(absoluteTargetUrl);
         }
       })
   );

@@ -1,8 +1,8 @@
 {
-  "name": "LILLY MEMES - Your Daily Dose of Laughter 😂🔥",
-  "short_name": "Lilly Memes",
-  "description": "Your Daily Dose of Laughter 😂🔥. Trending memes, funny stories, daily quotes, and social entertainment.",
-  "start_url": "./index.html",
+  "name": "LILLY MEMES",
+  "short_name": "LILLY MEMES",
+  "description": "Your Daily Dose of Laughter 😂🔥",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
@@ -18,32 +18,8 @@
   "prefer_related_applications": false,
   "icons": [
     {
-      "src": "assets/icon.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "assets/icon.png",
+      "src": "assets/appicon.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "assets/icon.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "maskable"
-    },
-    {
-      "src": "assets/icon.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
-    },
-    {
-      "src": "assets/icon.png",
-      "sizes": "any",
       "type": "image/png",
       "purpose": "any"
     }
@@ -56,8 +32,8 @@
       "url": "./index.html#trending",
       "icons": [
         {
-          "src": "assets/icon.png",
-          "sizes": "192x192",
+          "src": "assets/appicon.png",
+          "sizes": "512x512",
           "type": "image/png"
         }
       ]
@@ -69,8 +45,8 @@
       "url": "./index.html#meme-of-the-day",
       "icons": [
         {
-          "src": "assets/icon.png",
-          "sizes": "192x192",
+          "src": "assets/appicon.png",
+          "sizes": "512x512",
           "type": "image/png"
         }
       ]
@@ -82,8 +58,8 @@
       "url": "./index.html#saved",
       "icons": [
         {
-          "src": "assets/icon.png",
-          "sizes": "192x192",
+          "src": "assets/appicon.png",
+          "sizes": "512x512",
           "type": "image/png"
         }
       ]

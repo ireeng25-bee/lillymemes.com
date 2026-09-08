@@ -901,6 +901,77 @@
     },
 
     /**
+     * Register or refresh one browser/device Web Push subscription.
+     */
+    async savePushSubscription(userId, subscription, userAgent = '') {
+      if (!userId || !subscription || !client) return { data: null, error: null };
+      const subscriptionJson = subscription.toJSON();
+      return safeExecute(
+        client
+          .from('push_subscriptions')
+          .upsert({
+            user_id: userId,
+            endpoint: subscription.endpoint,
+            p256dh: subscriptionJson.keys && subscriptionJson.keys.p256dh,
+            auth: subscriptionJson.keys && subscriptionJson.keys.auth,
+            user_agent: userAgent,
+            enabled: true,
+            new_meme_notifications: true,
+            updated_at: new Date().toISOString()
+          }, { onConflict: 'endpoint' })
+          .select()
+          .single()
+      );
+    },
+
+    /**
+     * Disable one device subscription without affecting other devices.
+     */
+    async disablePushSubscription(userId, endpoint) {
+      if (!userId || !endpoint || !client) return { data: null, error: null };
+      return safeExecute(
+        client
+          .from('push_subscriptions')
+          .update({ enabled: false, updated_at: new Date().toISOString() })
+          .eq('user_id', userId)
+          .eq('endpoint', endpoint)
+      );
+    },
+
+    /**
+     * Persist the user's new-meme notification preference for one device.
+     */
+    async setPushPreference(userId, endpoint, enabled) {
+      if (!userId || !endpoint || !client) return { data: null, error: null };
+      return safeExecute(
+        client
+          .from('push_subscriptions')
+          .update({
+            enabled,
+            new_meme_notifications: enabled,
+            updated_at: new Date().toISOString()
+          })
+          .eq('user_id', userId)
+          .eq('endpoint', endpoint)
+      );
+    },
+
+    /**
+     * Read this browser/device's stored notification preference.
+     */
+    async getPushPreference(userId, endpoint) {
+      if (!userId || !endpoint || !client) return { data: null, error: null };
+      return safeExecute(
+        client
+          .from('push_subscriptions')
+          .select('enabled, new_meme_notifications')
+          .eq('user_id', userId)
+          .eq('endpoint', endpoint)
+          .maybeSingle()
+      );
+    },
+
+    /**
      * Fetch public community activity feed
      */
     async getRecentActivity(limit = 6) {
