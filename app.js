@@ -2004,18 +2004,28 @@
   // SERVICE WORKER & PWA REGISTRATION (Rule 22)
   // =========================================================================
 
+  let serviceWorkerRegistrationAttempted = false;
+
   function registerServiceWorker() {
-    if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js')
-          .then(registration => {
-            console.log('[PWA] Service Worker active with scope:', registration.scope);
-          })
-          .catch(err => {
-            console.warn('[PWA] Service Worker registration failed:', err);
-          });
-      });
-    }
+    if (serviceWorkerRegistrationAttempted) return;
+    if (!('serviceWorker' in navigator) || !window.location.protocol.startsWith('http')) return;
+
+    serviceWorkerRegistrationAttempted = true;
+
+    window.addEventListener('load', async () => {
+      try {
+        const registration = await navigator.serviceWorker.register('sw.js', {
+          updateViaCache: 'none'
+        });
+        console.log('[PWA] Service Worker active with scope:', registration.scope);
+
+        if (registration.waiting) {
+          registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+        }
+      } catch (err) {
+        console.warn('[PWA] Service Worker registration failed:', err);
+      }
+    });
   }
 
   // =========================================================================

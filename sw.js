@@ -6,7 +6,7 @@
  * ============================================================================
  */
 
-const CACHE_NAME = 'lilly-memes-v1.0.5';
+const CACHE_NAME = 'lilly-memes-v1.0.6';
 
 // Core Application Shell Assets to Pre-cache
 const STATIC_ASSETS = [
@@ -41,6 +41,12 @@ self.addEventListener('install', (event) => {
   );
 });
 
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+
 // ============================================================================
 // 2. ACTIVATE LIFECYCLE: CLEAN STALE CACHES & CLAIM CLIENTS
 // ============================================================================
@@ -50,7 +56,7 @@ self.addEventListener('activate', (event) => {
       .then((cacheNames) => {
         return Promise.all(
           cacheNames.map((cache) => {
-            if (cache !== CACHE_NAME) {
+            if (cache.startsWith('lilly-memes-') && cache !== CACHE_NAME) {
               return caches.delete(cache);
             }
           })
