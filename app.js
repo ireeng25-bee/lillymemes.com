@@ -181,6 +181,10 @@
     DOM.adminCreatePostForm = $('#adminCreatePostForm');
     DOM.memeImageFileInput = $('#memeImageFileInput');
     DOM.memeFileDropZone = $('#memeFileDropZone');
+    if (DOM.memeImageFileInput) {
+      DOM.memeImageFileInput.setAttribute('accept', MEME_FILE_ACCEPT);
+      DOM.memeImageFileInput.disabled = false;
+    }
     DOM.dropZonePrompt = $('#dropZonePrompt');
     DOM.imagePreviewWrap = $('#imagePreviewWrap');
     DOM.memeUploadPreview = $('#memeUploadPreview');
@@ -1171,6 +1175,7 @@
   let selectedPostPreviewUrl = null;
   const MAX_MEME_FILE_SIZE = 10 * 1024 * 1024;
   const SUPPORTED_MEME_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
+  const MEME_FILE_ACCEPT = 'image/jpeg,image/png,image/webp,image/gif';
 
   function formatFileSize(bytes) {
     if (bytes < 1024 * 1024) return `${Math.max(1, Math.round(bytes / 1024))} KB`;
@@ -1718,10 +1723,71 @@
     if (DOM.cancelAdminPostBtn) DOM.cancelAdminPostBtn.addEventListener('click', () => closeModal(DOM.adminPostModal));
 
     // Admin Image Drop Zone & Picker
+    function triggerMemeFilePicker(event) {
+      const input = DOM.memeImageFileInput;
+      if (!input || input.disabled) return;
+      if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      input.setAttribute('accept', MEME_FILE_ACCEPT);
+      input.setAttribute('aria-label', 'Choose a meme image');
+      input.click();
+    }
+
     if (DOM.memeImageFileInput) {
       DOM.memeImageFileInput.addEventListener('change', (e) => {
-        if (e.target.files && e.target.files[0]) {
-          handleMemeFileSelect(e.target.files[0]);
+        const file = e.target && e.target.files && e.target.files[0];
+        if (file) {
+          handleMemeFileSelect(file);
+        }
+      });
+    }
+
+    if (DOM.memeFileDropZone) {
+      DOM.memeFileDropZone.setAttribute('role', 'button');
+      DOM.memeFileDropZone.setAttribute('tabindex', '0');
+      DOM.memeFileDropZone.setAttribute('aria-label', 'Select a meme image');
+
+      DOM.memeFileDropZone.addEventListener('click', (event) => {
+        if (event.target && event.target.closest('.remove-file-btn')) return;
+        const clickedInput = event.target && event.target.closest('.file-input');
+        if (clickedInput) return;
+        triggerMemeFilePicker(event);
+      });
+
+      DOM.memeFileDropZone.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          triggerMemeFilePicker(event);
+        }
+      });
+
+      DOM.memeFileDropZone.addEventListener('dragenter', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        DOM.memeFileDropZone.classList.add('drag-active');
+      });
+
+      DOM.memeFileDropZone.addEventListener('dragover', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        DOM.memeFileDropZone.classList.add('drag-active');
+      });
+
+      DOM.memeFileDropZone.addEventListener('dragleave', (event) => {
+        if (!DOM.memeFileDropZone.contains(event.relatedTarget)) {
+          DOM.memeFileDropZone.classList.remove('drag-active');
+        }
+      });
+
+      DOM.memeFileDropZone.addEventListener('drop', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        DOM.memeFileDropZone.classList.remove('drag-active');
+
+        const file = event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files[0];
+        if (file) {
+          handleMemeFileSelect(file);
         }
       });
     }
@@ -1984,4 +2050,4 @@
     initApp();
   }
 
-})();
+})()

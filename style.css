@@ -2211,20 +2211,25 @@ ul, ol {
   background: var(--bg-surface-subtle);
   cursor: pointer;
   transition: var(--transition-fast);
+  outline: none;
 }
 
-.file-drop-zone:hover {
+.file-drop-zone:hover,
+.file-drop-zone:focus-visible,
+.file-drop-zone.drag-active {
   border-color: var(--primary-purple);
   background: #FAF5FF;
 }
 
 .file-input {
   position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
+  inset: 0;
+  width: 100%;
+  height: 100%;
   opacity: 0;
   cursor: pointer;
   z-index: 1;
+  pointer-events: auto;
 }
 
 .drop-zone-placeholder {
