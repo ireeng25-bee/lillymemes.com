@@ -167,8 +167,6 @@
     DOM.commentSubmitForm = $('#commentSubmitForm');
     DOM.commentInputField = $('#commentInputField');
     DOM.refreshReminderModal = $('#refreshReminderModal');
-    DOM.closeRefreshReminderBtn = $('#closeRefreshReminderBtn');
-    DOM.laterRefreshBtn = $('#laterRefreshBtn');
     DOM.refreshAppBtn = $('#refreshAppBtn');
 
     // Admin Post Creation Modal
@@ -1460,8 +1458,9 @@
     window.addEventListener('pageshow', (event) => {
       if (event.persisted) handleAppVisibilityChange();
     });
-    if (DOM.closeRefreshReminderBtn) DOM.closeRefreshReminderBtn.addEventListener('click', () => closeModal(DOM.refreshReminderModal));
-    if (DOM.laterRefreshBtn) DOM.laterRefreshBtn.addEventListener('click', () => closeModal(DOM.refreshReminderModal));
+    if (DOM.refreshReminderModal) {
+      DOM.refreshReminderModal.addEventListener('cancel', (event) => event.preventDefault());
+    }
     if (DOM.refreshAppBtn) DOM.refreshAppBtn.addEventListener('click', () => window.location.reload());
 
     if (DOM.mobileMenuBtn) {
