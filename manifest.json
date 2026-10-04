@@ -26,10 +26,10 @@
   ],
   "shortcuts": [
     {
-      "name": "Trending Memes",
-      "short_name": "Trending",
-      "description": "View hottest memes right now",
-      "url": "./index.html#trending",
+      "name": "Latest Memes",
+      "short_name": "Latest",
+      "description": "View the newest memes",
+      "url": "./index.html#feed",
       "icons": [
         {
           "src": "assets/appicon.png",

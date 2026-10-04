@@ -294,7 +294,7 @@
     /**
      * Fetch feed memes with filtering, pagination, and category criteria
      */
-    async getFeedPosts({ category = 'all', limit = 12, offset = 0, sort = 'created_at' } = {}) {
+    async getFeedPosts({ category = 'all', limit = 12, offset = 0 } = {}) {
       if (!client) return { data: [], error: null, count: 0 };
       let query = client
         .from('posts')
@@ -305,7 +305,6 @@
           category,
           hashtags,
           is_motd,
-          is_featured,
           views_count,
           reactions_count,
           comments_count,
@@ -319,7 +318,8 @@
             role
           )
         `, { count: 'exact' })
-        .order(sort, { ascending: false })
+        .order('created_at', { ascending: false })
+        .order('id', { ascending: false })
         .range(offset, offset + limit - 1);
 
       if (category && category.toLowerCase() !== 'all') {
@@ -330,9 +330,9 @@
     },
 
     /**
-     * Fetch trending memes ordered by total engagement (views + reactions + comments)
+     * Fetch curated posts for the For You section, ranked by engagement
      */
-    async getTrendingPosts(limit = 4) {
+    async getForYouPosts(limit = 4) {
       if (!client) return { data: [], error: null };
       return safeExecute(
         client
@@ -355,6 +355,7 @@
           `)
           .order('reactions_count', { ascending: false })
           .order('views_count', { ascending: false })
+          .order('created_at', { ascending: false })
           .limit(limit)
       );
     },
@@ -435,7 +436,6 @@
             category,
             hashtags,
             is_motd,
-            is_featured,
             views_count,
             reactions_count,
             comments_count,
@@ -517,7 +517,7 @@
     /**
      * Create and publish official meme post (Admin only, Rule 11)
      */
-    async createPost({ caption, imageUrl, category, hashtags, isMotd = false, isFeatured = false, userId }) {
+    async createPost({ caption, imageUrl, category, hashtags, isMotd = false, userId }) {
       if (!client) return { data: null, error: new Error('Client offline') };
 
       // Verify Admin permissions before attempting insert
@@ -545,7 +545,6 @@
             category: category,
             hashtags: hashtags ? hashtags.trim() : null,
             is_motd: isMotd,
-            is_featured: isFeatured,
             user_id: userId,
             created_at: new Date().toISOString()
           }])

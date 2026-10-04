@@ -4,17 +4,17 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>LILLY MEMES - Your Daily Dose of Laughter 😂🔥</title>
+  <title>LILLY MEMES | Latest Memes & Community</title>
 
   <!-- Meta & SEO -->
-  <meta name="description" content="LILLY MEMES: Your daily dose of laughter, trending memes, love stories, relatable vibes, and community entertainment.">
-  <meta name="keywords" content="memes, funny memes, malawi memes, trending, entertainment, funny stories, quotes, lilly memes">
+  <meta name="description" content="LILLY MEMES: Your daily dose of laughter, the latest memes, love stories, relatable vibes, and community entertainment.">
+  <meta name="keywords" content="memes, funny memes, malawi memes, latest memes, entertainment, funny stories, quotes, lilly memes">
   <meta name="author" content="LILLY MEMES">
 
   <!-- OpenGraph / Social Sharing -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="LILLY MEMES - Your Daily Dose of Laughter 😂🔥">
-  <meta property="og:description" content="Explore trending memes, laugh every day, react, comment and join the community.">
+  <meta property="og:description" content="Explore the latest memes, laugh every day, react, comment and join the community.">
   <meta property="og:image" content="assets/logo.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="LILLY MEMES">
@@ -22,7 +22,7 @@
   <meta name="twitter:image" content="assets/logo.png">
 
   <!-- PWA & Theme Settings -->
-  <meta name="theme-color" content="#0B132B">
+  <meta name="theme-color" content="#0B1224">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -59,7 +59,7 @@
         <img src="assets/logo.png" alt="LILLY MEMES Logo" class="brand-logo-img">
         <div class="brand-text-block">
           <span class="brand-title">Lilly Memes</span>
-          <span class="brand-subtext">Make Life Funnier <span class="heart-pulse">💖</span></span>
+          <span class="brand-subtext">Social entertainment</span>
         </div>
       </a>
 
@@ -89,7 +89,9 @@
       <!-- Right Header Actions (Auth / Notifications / Profile) -->
       <div class="header-actions">
         <button type="button" class="header-icon-btn mobile-menu-btn" id="mobileMenuBtn" aria-label="Open navigation menu" aria-controls="sidebarLeft" aria-expanded="false">
-          <span aria-hidden="true">☰</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true">
+            <path d="M4 7h16M4 12h16M4 17h16"></path>
+          </svg>
         </button>
 
         <!-- Notification Button with Dynamic Unread Badge -->
@@ -120,7 +122,7 @@
         <div class="auth-area" id="headerAuthArea">
           <!-- Rendered for Guests -->
           <div class="guest-actions" id="guestActions">
-            <button type="button" class="btn btn-sm btn-outline-light" id="openLoginBtn">Log In</button>
+            <button type="button" class="btn btn-sm btn-outline-light" id="openLoginBtn">Login</button>
             <button type="button" class="btn btn-sm btn-pink" id="openSignUpBtn">Sign Up</button>
           </div>
 
@@ -199,14 +201,13 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="#trending" class="nav-link" data-route="trending" id="navTrending">
-                <span class="nav-icon">🔥</span>
-                <span class="nav-label">Trending</span>
-              </a>
-            </li>
-            <li class="nav-item">
               <a href="#meme-of-the-day" class="nav-link" data-route="motd" id="navMotd">
-                <span class="nav-icon">🏆</span>
+                <span class="nav-icon" aria-hidden="true">
+                  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4Z"></path>
+                    <path d="M7 6H4v2a4 4 0 0 0 4 4M17 6h3v2a4 4 0 0 1-4 4"></path>
+                  </svg>
+                </span>
                 <span class="nav-label">Meme of the Day</span>
               </a>
             </li>
@@ -222,31 +223,54 @@
             </li>
             <li class="nav-item">
               <a href="#saved" class="nav-link" data-route="saved" id="navSaved">
-                <span class="nav-icon">🔖</span>
+                <span class="nav-icon" aria-hidden="true">
+                  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 4.5A1.5 1.5 0 0 1 7.5 3h9A1.5 1.5 0 0 1 18 4.5V21l-6-4-6 4V4.5Z"></path>
+                  </svg>
+                </span>
                 <span class="nav-label">Saved Memes</span>
               </a>
             </li>
             <li class="nav-item">
               <a href="#for-you" class="nav-link" data-route="for-you" id="navForYou">
-                <span class="nav-icon">❤️</span>
+                <span class="nav-icon" aria-hidden="true">
+                  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20.8 8.8c0 5.1-8.8 10.2-8.8 10.2S3.2 13.9 3.2 8.8A4.3 4.3 0 0 1 12 6.7a4.3 4.3 0 0 1 8.8 2.1Z"></path>
+                  </svg>
+                </span>
                 <span class="nav-label">For You</span>
               </a>
             </li>
             <li class="nav-item">
               <a href="#stories" class="nav-link" data-route="stories" id="navStories">
-                <span class="nav-icon">📖</span>
+                <span class="nav-icon" aria-hidden="true">
+                  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v17H6.5A2.5 2.5 0 0 0 4 22V5.5Z"></path>
+                    <path d="M4 18a2.5 2.5 0 0 1 2.5-2.5H20"></path>
+                  </svg>
+                </span>
                 <span class="nav-label">Stories</span>
               </a>
             </li>
             <li class="nav-item">
               <a href="#quotes" class="nav-link" data-route="quotes" id="navQuotes">
-                <span class="nav-icon">💭</span>
+                <span class="nav-icon" aria-hidden="true">
+                  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.6 8.6 0 0 1-3.5-.7L4 20l1.2-3.5A7.1 7.1 0 0 1 4 12.5 7.5 7.5 0 0 1 12 5a7.5 7.5 0 0 1 8 6.5Z"></path>
+                    <path d="M8 12h.01M12 12h.01M16 12h.01"></path>
+                  </svg>
+                </span>
                 <span class="nav-label">Quotes</span>
               </a>
             </li>
             <li class="nav-item">
               <button type="button" class="nav-link nav-btn-action" id="sidebarSurpriseBtn">
-                <span class="nav-icon">🎁</span>
+                <span class="nav-icon" aria-hidden="true">
+                  <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 10h16v11H4zM3 7h18v3H3zM12 7v14"></path>
+                    <path d="M12 7H8.5a2 2 0 1 1 2-2c0 1.2 1.5 2 1.5 2ZM12 7h3.5a2 2 0 1 0-2-2c0 1.2-1.5 2-1.5 2Z"></path>
+                  </svg>
+                </span>
                 <span class="nav-label">Surprise Me</span>
               </button>
             </li>
@@ -256,81 +280,76 @@
         <!-- Sidebar Category Quick Links (Matching Dashboard Reference) -->
         <div class="sidebar-section">
           <div class="sidebar-section-header">
-            <span class="section-icon-bars">☰</span>
+            <span class="section-icon-bars" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="4" width="6" height="6" rx="1"></rect>
+                <rect x="14" y="4" width="6" height="6" rx="1"></rect>
+                <rect x="4" y="14" width="6" height="6" rx="1"></rect>
+                <rect x="14" y="14" width="6" height="6" rx="1"></rect>
+              </svg>
+            </span>
             <h4 class="sidebar-section-title">Categories</h4>
           </div>
           <ul class="category-menu-list" id="sidebarCategoryList">
             <li>
               <button type="button" class="cat-menu-link" data-category="Funny">
-                <span class="cat-emoji">😂</span>
                 <span class="cat-name">Funny</span>
               </button>
             </li>
             <li>
               <button type="button" class="cat-menu-link" data-category="Love">
-                <span class="cat-emoji">💖</span>
                 <span class="cat-name">Love</span>
               </button>
             </li>
             <li>
               <button type="button" class="cat-menu-link" data-category="Savage">
-                <span class="cat-emoji">😈</span>
                 <span class="cat-name">Savage</span>
               </button>
             </li>
             <li>
               <button type="button" class="cat-menu-link" data-category="School">
-                <span class="cat-emoji">🎓</span>
                 <span class="cat-name">School</span>
               </button>
             </li>
             <li>
               <button type="button" class="cat-menu-link" data-category="Football">
-                <span class="cat-emoji">⚽</span>
                 <span class="cat-name">Football</span>
               </button>
             </li>
             <li>
               <button type="button" class="cat-menu-link" data-category="Quotes">
-                <span class="cat-emoji">💬</span>
                 <span class="cat-name">Quotes</span>
               </button>
             </li>
             <li>
               <button type="button" class="cat-menu-link" data-category="Motivation">
-                <span class="cat-emoji">💪</span>
                 <span class="cat-name">Motivation</span>
               </button>
             </li>
             <li>
               <button type="button" class="cat-menu-link" data-category="Malawi">
-                <span class="cat-emoji">🇲🇼</span>
                 <span class="cat-name">Malawi</span>
               </button>
             </li>
             <li>
               <button type="button" class="cat-menu-link" data-category="Horror">
-                <span class="cat-emoji">👻</span>
                 <span class="cat-name">Horror</span>
               </button>
             </li>
             <li>
               <button type="button" class="cat-menu-link" data-category="Relationships">
-                <span class="cat-emoji">💕</span>
                 <span class="cat-name">Relationships</span>
               </button>
             </li>
           </ul>
         </div>
 
-        <!-- Sidebar Promo Sticker Card (Reference visual: "Good Vibes Only") -->
+        <!-- Community note -->
         <div class="sidebar-sticker-card">
           <div class="sticker-badge-glow">
-            <span class="sticker-crown">👑</span>
             <span class="sticker-title">Good Vibes Only</span>
-            <span class="sticker-heart">💖</span>
           </div>
-          <p class="sticker-subtext">Spread laughter every day!</p>
+          <p class="sticker-subtext">A community for laughs, stories, and shared moments.</p>
         </div>
 
       </div>
@@ -341,30 +360,14 @@
     <!-- =============================================================== -->
     <main class="main-content" id="mainContent">
 
-      <!-- Dynamic Time-of-Day Personalized Greeting Banner -->
+      <!-- Dynamic time-of-day personalized welcome -->
       <section class="greeting-banner" id="greetingBanner" aria-live="polite">
         <div class="greeting-content">
           <div class="greeting-title-wrap">
-            <span class="greeting-sun-icon" id="greetingIcon">☀️</span>
-            <h1 class="greeting-heading" id="greetingHeading">Good Morning, Esther! 👋</h1>
+            <span class="greeting-sun-icon" id="greetingIcon" aria-hidden="true"></span>
+            <h1 class="greeting-heading" id="greetingHeading">Good evening, Friend</h1>
           </div>
-          <p class="greeting-subtext" id="greetingSubtext">Hope your day is full of smiles and good vibes!</p>
-          <div class="greeting-pill-badge">
-            Keep smiling, life is better with memes! 💖
-          </div>
-        </div>
-
-        <div class="greeting-graphic">
-          <div class="greeting-mascot-wrap">
-            <div class="mascot-crown">👑</div>
-            <div class="mascot-avatar">
-              <span class="mascot-emoji">😎</span>
-            </div>
-            <div class="mascot-quote-bubble">
-              <span class="quote-text">Laugh More,<br>Worry Less</span>
-              <span class="bubble-heart">💖</span>
-            </div>
-          </div>
+          <p class="greeting-subtext" id="greetingSubtext">Discover what's new in the LILLY MEMES community.</p>
         </div>
       </section>
 
@@ -372,62 +375,46 @@
       <section class="quick-categories-section" aria-label="Quick Category Filter">
         <div class="quick-cat-scroll" id="quickCatScroll">
           <button type="button" class="quick-cat-card card-yellow active" data-category="all">
-            <span class="qcat-emoji">🔥</span>
             <span class="qcat-title">All Memes</span>
           </button>
           <button type="button" class="quick-cat-card card-amber" data-category="Funny">
-            <span class="qcat-emoji">😂</span>
             <span class="qcat-title">Funny</span>
           </button>
           <button type="button" class="quick-cat-card card-pink" data-category="Love">
-            <span class="qcat-emoji">🤍</span>
             <span class="qcat-title">Love</span>
           </button>
           <button type="button" class="quick-cat-card card-purple" data-category="Savage">
-            <span class="qcat-emoji">😈</span>
             <span class="qcat-title">Savage</span>
           </button>
           <button type="button" class="quick-cat-card card-green" data-category="Motivation">
-            <span class="qcat-emoji">💪</span>
             <span class="qcat-title">Motivation</span>
           </button>
           <button type="button" class="quick-cat-card card-blue" data-category="Football">
-            <span class="qcat-emoji">⚽</span>
             <span class="qcat-title">Football</span>
           </button>
           <button type="button" class="quick-cat-card card-outline" id="browseAllCategoriesBtn">
-            <span class="qcat-icon-grid">⊞</span>
+            <span class="qcat-icon-grid" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="4" y="4" width="6" height="6" rx="1"></rect>
+                <rect x="14" y="4" width="6" height="6" rx="1"></rect>
+                <rect x="4" y="14" width="6" height="6" rx="1"></rect>
+                <rect x="14" y="14" width="6" height="6" rx="1"></rect>
+              </svg>
+            </span>
             <span class="qcat-title">More</span>
           </button>
         </div>
       </section>
 
-      <!-- Section: Trending Memes (Ranked Horizontal Carousel) -->
-      <section class="feed-section" id="trendingSection" aria-label="Trending Memes">
-        <div class="feed-section-header">
-          <div class="section-title-wrap">
-            <span class="section-title-icon fire-icon">🔥</span>
-            <h2 class="section-title">Trending Memes</h2>
-          </div>
-          <button type="button" class="view-all-link" id="viewAllTrendingBtn">View All &rsaquo;</button>
-        </div>
-
-        <div class="trending-cards-grid" id="trendingCardsContainer">
-          <!-- Loaded dynamically from real Supabase database records -->
-          <div class="feed-loading-skeleton" id="trendingLoading">
-            <div class="skeleton-card"></div>
-            <div class="skeleton-card"></div>
-            <div class="skeleton-card"></div>
-            <div class="skeleton-card"></div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Section: Latest Memes Feed (4-Column Grid Reference) -->
+      <!-- Section: Latest Memes Feed -->
       <section class="feed-section" id="latestSection" aria-label="Latest Memes Feed">
         <div class="feed-section-header">
           <div class="section-title-wrap">
-            <span class="section-title-icon box-icon">📂</span>
+            <span class="section-title-icon box-icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 6.5A1.5 1.5 0 0 1 4.5 5H10l2 2h7.5A1.5 1.5 0 0 1 21 8.5v9a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17.5v-11Z"></path>
+              </svg>
+            </span>
             <h2 class="section-title">Latest Memes</h2>
           </div>
           <button type="button" class="view-all-link" id="viewAllLatestBtn">View All &rsaquo;</button>
@@ -446,7 +433,7 @@
         <!-- Pagination / Load More -->
         <div class="load-more-wrap" id="loadMoreWrap">
           <button type="button" class="btn btn-outline-purple" id="loadMoreMemesBtn" hidden>Load More Memes</button>
-          <div class="feed-end-message" id="feedEndMessage" hidden>You're all caught up! Check back later for more memes. 😂🔥</div>
+          <div class="feed-end-message" id="feedEndMessage" hidden>You're all caught up. Check back later for more memes.</div>
         </div>
       </section>
 
@@ -455,7 +442,13 @@
         <div class="curated-column">
           <div class="feed-section-header">
             <div class="section-title-wrap">
-              <span class="section-title-icon target-icon">🎯</span>
+              <span class="section-title-icon target-icon" aria-hidden="true">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="9"></circle>
+                  <circle cx="12" cy="12" r="5"></circle>
+                  <circle cx="12" cy="12" r="1"></circle>
+                </svg>
+              </span>
               <div>
 
                 <h2 class="section-title">For You</h2>
@@ -473,11 +466,8 @@
         <aside class="surprise-column">
           <div class="feeling-lucky-card">
             <div class="lucky-header">
-              <h3 class="lucky-title">Feeling Lucky? 🎁</h3>
+              <h3 class="lucky-title">Feeling lucky?</h3>
               <p class="lucky-subtitle">Get a random meme now!</p>
-            </div>
-            <div class="lucky-box-visual">
-              <span class="lucky-gift-icon">🎁</span>
             </div>
             <button type="button" class="btn btn-pink btn-block" id="surpriseMeCenterBtn">Surprise Me</button>
           </div>
@@ -488,7 +478,12 @@
       <section class="feed-section" id="storiesSection" hidden>
         <div class="feed-section-header">
           <div class="section-title-wrap">
-            <span class="section-title-icon">📖</span>
+            <span class="section-title-icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v17H6.5A2.5 2.5 0 0 0 4 22V5.5Z"></path>
+                <path d="M4 18a2.5 2.5 0 0 1 2.5-2.5H20"></path>
+              </svg>
+            </span>
             <div>
               <h2 class="section-title">Engaging Stories</h2>
               <p class="section-subtitle">Love, horror, sad, and funny real-life tales</p>
@@ -504,7 +499,11 @@
       <section class="feed-section" id="quotesSection" hidden>
         <div class="feed-section-header">
           <div class="section-title-wrap">
-            <span class="section-title-icon">💭</span>
+            <span class="section-title-icon" aria-hidden="true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.6 8.6 0 0 1-3.5-.7L4 20l1.2-3.5A7.1 7.1 0 0 1 4 12.5 7.5 7.5 0 0 1 12 5a7.5 7.5 0 0 1 8 6.5Z"></path>
+              </svg>
+            </span>
             <div>
               <h2 class="section-title">Daily Quotes & Motivation</h2>
               <p class="section-subtitle">Inspirational words, love thoughts, and daily gospel vibes</p>
@@ -519,8 +518,8 @@
       <!-- Section: Daily Meme Challenge (Rule 27) -->
       <section class="feed-section challenge-card" id="challengeSection">
         <div class="challenge-inner">
-          <div class="challenge-badge">🔥 TODAY'S CHALLENGE</div>
-          <h3 class="challenge-title" id="challengeTitle">Caption this picture! 😂</h3>
+          <div class="challenge-badge">TODAY'S CHALLENGE</div>
+          <h3 class="challenge-title" id="challengeTitle">Caption this picture!</h3>
           <p class="challenge-prompt" id="challengePrompt">Give your funniest caption. Winner gets featured on Meme of the Day!</p>
           <div class="challenge-media-wrap" id="challengeMediaWrap">
             <!-- Dynamic challenge image -->
@@ -540,13 +539,11 @@
     <aside class="sidebar-right" id="sidebarRight" aria-label="Spotlight & Quick Access">
       <div class="sidebar-right-inner">
 
-        <!-- Meme of the Day Spotlight Card (Dark Navy High-Contrast) -->
+        <!-- Meme of the Day editorial feature -->
         <article class="motd-spotlight-card" id="motdCard">
           <div class="motd-header">
             <div class="motd-badge">
-              <span class="trophy-icon">🏆</span>
               <span class="motd-label">Meme of the Day</span>
-              <span class="crown-icon">👑</span>
             </div>
             <span class="motd-arrow">&rsaquo;</span>
           </div>
@@ -555,19 +552,26 @@
             <div class="motd-media-wrap">
               <img src="assets/icon.png" alt="Meme of the Day" class="motd-image" id="motdImage" loading="lazy">
             </div>
-            <h4 class="motd-title" id="motdTitle">When you realize it's only Monday...</h4>
+            <h4 class="motd-title" id="motdTitle">Today's community pick</h4>
             <div class="motd-stats">
               <span class="stat-pill" title="Views">
-                <span class="stat-icon">👁️</span>
-                <span id="motdViews">52.8K</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+                <span id="motdViews">—</span>
               </span>
               <span class="stat-pill" title="Likes">
-                <span class="stat-icon">❤️</span>
-                <span id="motdLikes">12.6K</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M20.8 8.8c0 5.1-8.8 10.2-8.8 10.2S3.2 13.9 3.2 8.8A4.3 4.3 0 0 1 12 6.7a4.3 4.3 0 0 1 8.8 2.1Z"></path>
+                </svg>
+                <span id="motdLikes">—</span>
               </span>
               <span class="stat-pill" title="Comments">
-                <span class="stat-icon">💬</span>
-                <span id="motdComments">1.2K</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M20 11.5a7.5 7.5 0 0 1-8 7.5 8.6 8.6 0 0 1-3.5-.7L4 20l1.2-3.5A7.1 7.1 0 0 1 4 12.5 7.5 7.5 0 0 1 12 5a7.5 7.5 0 0 1 8 6.5Z"></path>
+                </svg>
+                <span id="motdComments">—</span>
               </span>
             </div>
           </div>
@@ -576,29 +580,54 @@
         <!-- Quick Actions Panel -->
         <section class="panel-card quick-actions-panel">
           <div class="panel-header">
-            <span class="panel-icon bolt-icon">⚡</span>
+            <span class="panel-icon bolt-icon" aria-hidden="true">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="m13 2-3 8H5l6 12 3-8h5L13 2Z"></path>
+              </svg>
+            </span>
             <h3 class="panel-title">Quick Actions</h3>
           </div>
           <div class="quick-action-buttons">
             <button type="button" class="action-btn btn-purple-grad" id="qaBrowseCategories">
-              <span class="qa-icon">⊞</span>
+              <span class="qa-icon" aria-hidden="true">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="4" y="4" width="6" height="6" rx="1"></rect>
+                  <rect x="14" y="4" width="6" height="6" rx="1"></rect>
+                  <rect x="4" y="14" width="6" height="6" rx="1"></rect>
+                  <rect x="14" y="14" width="6" height="6" rx="1"></rect>
+                </svg>
+              </span>
               <span>Browse Categories</span>
             </button>
-            <button type="button" class="action-btn btn-pink-grad" id="qaViewTrending">
-              <span class="qa-icon">🔥</span>
-              <span>View Trending</span>
-            </button>
+            <a href="#latestSection" class="action-btn btn-pink-grad">
+              <span class="qa-icon" aria-hidden="true">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="9"></circle>
+                  <path d="M12 7v5l3 2"></path>
+                </svg>
+              </span>
+              <span>Latest Memes</span>
+            </a>
             <button type="button" class="action-btn btn-cyan-grad" id="qaSavedMemes">
-              <span class="qa-icon">🔖</span>
+              <span class="qa-icon" aria-hidden="true">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M6 4.5A1.5 1.5 0 0 1 7.5 3h9A1.5 1.5 0 0 1 18 4.5V21l-6-4-6 4V4.5Z"></path>
+                </svg>
+              </span>
               <span>Saved Memes</span>
             </button>
             <button type="button" class="action-btn btn-orange-grad" id="qaSurpriseMe">
-              <span class="qa-icon">🎁</span>
-              <span>Surprise Me &rsaquo;</span>
+              <span class="qa-icon" aria-hidden="true">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 10h16v11H4zM3 7h18v3H3zM12 7v14"></path>
+                  <path d="M12 7H8.5a2 2 0 1 1 2-2c0 1.2 1.5 2 1.5 2ZM12 7h3.5a2 2 0 1 0-2-2c0 1.2-1.5 2-1.5 2Z"></path>
+                </svg>
+              </span>
+              <span>Surprise Me</span>
             </button>
             <!-- Admin Only Post Trigger Button -->
             <button type="button" class="action-btn btn-admin-gold" id="qaAdminCreatePost" hidden>
-              <span class="qa-icon">➕</span>
+              <span class="qa-icon" aria-hidden="true">+</span>
               <span>Create Post (Admin)</span>
             </button>
           </div>
@@ -608,7 +637,12 @@
         <section class="panel-card activity-panel">
           <div class="panel-header">
             <div class="panel-title-wrap">
-              <span class="panel-icon bell-icon">🔔</span>
+              <span class="panel-icon bell-icon" aria-hidden="true">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                  <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>
+              </span>
               <h3 class="panel-title">Recent Activity</h3>
             </div>
             <button type="button" class="panel-link" id="viewAllActivityBtn">View All &rsaquo;</button>
@@ -622,7 +656,11 @@
         <section class="panel-card categories-cloud-panel">
           <div class="panel-header">
             <div class="panel-title-wrap">
-              <span class="panel-icon fire-icon">🔥</span>
+              <span class="panel-icon fire-icon" aria-hidden="true">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22a7 7 0 0 0 7-7c0-4-3-6-4-11-2 2-3 4-3 6-2-1-3-3-3-5-2 3-4 6-4 10a7 7 0 0 0 7 7Z"></path>
+                </svg>
+              </span>
               <h3 class="panel-title">Popular Categories</h3>
             </div>
             <button type="button" class="panel-link" id="viewAllCategoriesPanelBtn">View All &rsaquo;</button>
@@ -647,29 +685,36 @@
   <div class="mobile-menu-backdrop" id="mobileMenuBackdrop" hidden></div>
 
   <footer class="developer-footer" aria-label="Developer contact">
-    <div class="developer-footer-copy">
-      <strong>Need a Website or Application? Contact us.</strong>
-      <a class="developer-name-link" href="https://web.facebook.com/profile.php?id=100086470868597" target="_blank" rel="noopener noreferrer" aria-label="Visit Abraham Msofi on Facebook">
-        <svg class="developer-contact-icon developer-facebook-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.17 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.03 1.79-4.7 4.53-4.7 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.96.93-1.96 1.88v2.27h3.34l-.53 3.49h-2.81V24C19.61 23.17 24 18.1 24 12.07Z" fill="currentColor"/>
+    <details class="developer-contact-popover">
+      <summary class="developer-contact-trigger">
+        <svg class="developer-code-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="m8 8-4 4 4 4m8-8 4 4-4 4m-3-11-2 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
-        <span>Abraham Msofi</span>
-      </a>
-    </div>
-    <div class="developer-footer-links">
-      <a href="https://wa.me/265993984344" target="_blank" rel="noopener noreferrer" aria-label="Chat with Abraham Msofi on WhatsApp">
-        <svg class="developer-contact-icon developer-whatsapp-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <path d="M20.52 3.48A11.82 11.82 0 0 0 12.08 0C5.54 0 .22 5.32.22 11.86c0 2.09.55 4.13 1.59 5.93L.12 24l6.35-1.66a11.83 11.83 0 0 0 5.61 1.42h.01c6.54 0 11.86-5.32 11.86-11.86 0-3.17-1.24-6.15-3.43-8.42ZM12.09 21.7h-.01a9.82 9.82 0 0 1-5.01-1.37l-.36-.21-3.77.99 1.01-3.68-.23-.38a9.82 9.82 0 0 1-1.5-5.19C2.22 6.44 6.65 2 12.09 2a9.82 9.82 0 0 1 6.99 2.9 9.82 9.82 0 0 1 2.9 6.99c0 5.44-4.44 9.81-9.89 9.81Zm5.4-7.36c-.3-.15-1.77-.87-2.05-.97-.28-.1-.48-.15-.68.15-.2.3-.78.97-.96 1.17-.18.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.47-.89-.79-1.49-1.77-1.67-2.07-.18-.3-.02-.46.14-.61.14-.14.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.68-1.64-.93-2.25-.25-.6-.5-.52-.68-.53h-.58c-.2 0-.52.07-.8.37-.28.3-1.05 1.03-1.05 2.52s1.08 2.92 1.23 3.12c.15.2 2.12 3.24 5.13 4.54.72.31 1.28.49 1.72.63.72.23 1.38.2 1.9.12.58-.09 1.77-.72 2.02-1.42.25-.7.25-1.3.18-1.42-.08-.12-.28-.2-.58-.35Z" fill="currentColor"/>
-        </svg>
-        <span>+265993984344</span>
-      </a>
-      <a href="mailto:abrahammsofie@gmail.com" aria-label="Email Abraham Msofi">
-        <svg class="developer-contact-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-          <path d="M3 4h18a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Zm0 2v.25l9 6.1 9-6.1V6H3Zm18 12V8.65l-8.44 5.72a1 1 0 0 1-1.12 0L3 8.65V18h18Z" fill="currentColor"/>
-        </svg>
-        <span>abrahammsofie@gmail.com</span>
-      </a>
-    </div>
+        <span>Developer</span>
+      </summary>
+      <section class="developer-contact-card" aria-label="Developer contact details">
+        <h2>Abraham Msofi</h2>
+        <p class="developer-contact-role">Web &amp; Application Developer</p>
+        <a href="https://wa.me/265993984344" target="_blank" rel="noopener noreferrer" aria-label="Chat with Abraham Msofi on WhatsApp">
+          <svg class="developer-code-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M20.52 3.48A11.82 11.82 0 0 0 12.08 0C5.54 0 .22 5.32.22 11.86c0 2.09.55 4.13 1.59 5.93L.12 24l6.35-1.66a11.83 11.83 0 0 0 5.61 1.42h.01c6.54 0 11.86-5.32 11.86-11.86 0-3.17-1.24-6.15-3.43-8.42ZM12.09 21.7h-.01a9.82 9.82 0 0 1-5.01-1.37l-.36-.21-3.77.99 1.01-3.68-.23-.38a9.82 9.82 0 0 1-1.5-5.19C2.22 6.44 6.65 2 12.09 2a9.82 9.82 0 0 1 6.99 2.9 9.82 9.82 0 0 1 2.9 6.99c0 5.44-4.44 9.81-9.89 9.81Zm5.4-7.36c-.3-.15-1.77-.87-2.05-.97-.28-.1-.48-.15-.68.15-.2.3-.78.97-.96 1.17-.18.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.47-.89-.79-1.49-1.77-1.67-2.07-.18-.3-.02-.46.14-.61.14-.14.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.68-1.64-.93-2.25-.25-.6-.5-.52-.68-.53h-.58c-.2 0-.52.07-.8.37-.28.3-1.05 1.03-1.05 2.52s1.08 2.92 1.23 3.12c.15.2 2.12 3.24 5.13 4.54.72.31 1.28.49 1.72.63.72.23 1.38.2 1.9.12.58-.09 1.77-.72 2.02-1.42.25-.7.25-1.3.18-1.42-.08-.12-.28-.2-.58-.35Z" fill="currentColor"/>
+          </svg>
+          <span>WhatsApp: +265 993 984 344</span>
+        </a>
+        <a href="mailto:abrahammsofie@gmail.com" aria-label="Email Abraham Msofi">
+          <svg class="developer-code-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M3 4h18a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Zm0 2v.25l9 6.1 9-6.1V6H3Zm18 12V8.65l-8.44 5.72a1 1 0 0 1-1.12 0L3 8.65V18h18Z" fill="currentColor"/>
+          </svg>
+          <span>Email: abrahammsofie@gmail.com</span>
+        </a>
+        <a class="developer-facebook-link" href="https://web.facebook.com/profile.php?id=100086470868597" target="_blank" rel="noopener noreferrer" aria-label="Visit Abraham Msofi on Facebook">
+          <svg class="developer-facebook-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.17 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.03 1.79-4.7 4.53-4.7 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.96.93-1.96 1.88v2.27h3.34l-.53 3.49h-2.81V24C19.61 23.17 24 18.1 24 12.07Z" fill="currentColor"/>
+          </svg>
+          <span>Facebook: Abraham Msofi</span>
+        </a>
+      </section>
+    </details>
   </footer>
 
   <!-- ================================================================= -->
@@ -682,22 +727,40 @@
       </span>
       <span class="mob-label">Home</span>
     </a>
-    <a href="#trending" class="mobile-nav-link" data-route="trending" id="mobNavTrending">
-      <span class="mob-icon">🔥</span>
-      <span class="mob-label">Trending</span>
+    <a href="#latestSection" class="mobile-nav-link">
+      <span class="mob-icon" aria-hidden="true">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="9"></circle>
+          <path d="M12 7v5l3 2"></path>
+        </svg>
+      </span>
+      <span class="mob-label">Latest</span>
     </a>
-    <!-- Central Prominent Action Floating Button -->
+    <!-- Central quick action -->
     <div class="mobile-fab-wrap">
       <button type="button" class="mobile-fab-btn" id="mobileActionFab" aria-label="Quick Action">
-        <span class="fab-icon" id="fabIcon">✨</span>
+        <span class="fab-icon" id="fabIcon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3v18M3 12h18"></path>
+          </svg>
+        </span>
       </button>
     </div>
     <a href="#saved" class="mobile-nav-link" data-route="saved" id="mobNavSaved">
-      <span class="mob-icon">🔖</span>
+      <span class="mob-icon" aria-hidden="true">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 4.5A1.5 1.5 0 0 1 7.5 3h9A1.5 1.5 0 0 1 18 4.5V21l-6-4-6 4V4.5Z"></path>
+        </svg>
+      </span>
       <span class="mob-label">Saved</span>
     </a>
     <button type="button" class="mobile-nav-link" id="mobNavProfile">
-      <span class="mob-icon">👤</span>
+      <span class="mob-icon" aria-hidden="true">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="8" r="4"></circle>
+          <path d="M4 21a8 8 0 0 1 16 0"></path>
+        </svg>
+      </span>
       <span class="mob-label">Profile</span>
     </button>
   </nav>
@@ -963,11 +1026,6 @@
         </div>
 
         <div class="form-checkbox-group">
-          <label class="custom-checkbox">
-            <input type="checkbox" id="postIsFeatured">
-            <span class="checkmark"></span>
-            Featured in Trending
-          </label>
           <label class="custom-checkbox">
             <input type="checkbox" id="postIsMotd">
             <span class="checkmark"></span>

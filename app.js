@@ -87,8 +87,6 @@
 
     // Feeds & Grids
     DOM.quickCatCards = $$('.quick-cat-card');
-    DOM.trendingCardsContainer = $('#trendingCardsContainer');
-    DOM.trendingLoading = $('#trendingLoading');
     DOM.memesFeedContainer = $('#memesFeedContainer');
     DOM.feedLoading = $('#feedLoading');
     DOM.loadMoreMemesBtn = $('#loadMoreMemesBtn');
@@ -106,7 +104,6 @@
 
     // Right Sidebar Panels & Quick Actions
     DOM.qaBrowseCategories = $('#qaBrowseCategories');
-    DOM.qaViewTrending = $('#qaViewTrending');
     DOM.qaSavedMemes = $('#qaSavedMemes');
     DOM.qaSurpriseMe = $('#qaSurpriseMe');
     DOM.qaAdminCreatePost = $('#qaAdminCreatePost');
@@ -192,7 +189,6 @@
     DOM.postCaption = $('#postCaption');
     DOM.postCategorySelect = $('#postCategorySelect');
     DOM.postHashtags = $('#postHashtags');
-    DOM.postIsFeatured = $('#postIsFeatured');
     DOM.postIsMotd = $('#postIsMotd');
     DOM.postSendNotification = $('#postSendNotification');
     DOM.postImageError = $('#postImageError');
@@ -289,30 +285,26 @@
     if (!DOM.greetingHeading || !DOM.greetingIcon || !DOM.greetingSubtext) return;
 
     const hour = new Date().getHours();
-    let greetingWord = 'Good Morning';
-    let icon = '☀️';
-    let subtext = 'Hope your day is full of smiles and good vibes!';
+    let greetingWord = 'Good morning';
+    let subtext = 'Discover what the community is laughing about today.';
 
     if (hour >= 12 && hour < 17) {
-      greetingWord = 'Good Afternoon';
-      icon = '🌤️';
-      subtext = 'Take a laughter break with fresh trending memes!';
+      greetingWord = 'Good afternoon';
+      subtext = 'Catch up on the latest memes and community highlights.';
     } else if (hour >= 17 && hour < 21) {
-      greetingWord = 'Good Evening';
-      icon = '🌅';
-      subtext = 'Wind down and enjoy the funniest community highlights!';
+      greetingWord = 'Good evening';
+      subtext = "Discover what's new in the LILLY MEMES community.";
     } else if (hour >= 21 || hour < 5) {
-      greetingWord = 'Good Night';
-      icon = '🌙';
-      subtext = 'Late night giggles before bed. Keep smiling!';
+      greetingWord = 'Good night';
+      subtext = 'Catch up on the funniest late-night memelore from the community.';
     }
 
-    const userName = state.currentProfile 
+    const userName = state.currentProfile
       ? (state.currentProfile.display_name || state.currentProfile.username)
       : 'Friend';
 
-    DOM.greetingIcon.textContent = icon;
-    DOM.greetingHeading.textContent = `${greetingWord}, ${userName}! 👋`;
+    DOM.greetingIcon.textContent = '';
+    DOM.greetingHeading.textContent = `${greetingWord}, ${userName}`;
     DOM.greetingSubtext.textContent = subtext;
   }
 
@@ -691,52 +683,6 @@
   }
 
   /**
-   * Load Trending Memes (Numbered Badges 1-4, Reference Design)
-   */
-  async function loadTrendingMemes() {
-    if (!DOM.trendingCardsContainer) return;
-
-    const { data: trending, error } = await window.LillyDB.getTrendingPosts(4);
-
-    if (DOM.trendingLoading) DOM.trendingLoading.remove();
-
-    if (error || !trending || trending.length === 0) {
-      DOM.trendingCardsContainer.innerHTML = `
-        <div class="empty-state-card" style="grid-column: 1 / -1; padding: 24px; text-align: center; color: var(--text-muted);">
-          🔥 Fresh trending memes are loading up! Check back shortly.
-        </div>`;
-      return;
-    }
-
-    DOM.trendingCardsContainer.innerHTML = '';
-
-    trending.forEach((post, index) => {
-      const card = document.createElement('article');
-      card.className = 'trending-meme-card';
-      card.dataset.postId = post.id;
-
-      card.innerHTML = `
-        <div class="rank-badge rank-badge-${index + 1}">${index + 1}</div>
-        <div class="meme-card-thumb-wrap">
-          <img src="${escapeHtml(post.image_url)}" alt="${escapeHtml(post.caption)}" class="meme-card-thumb" loading="lazy">
-        </div>
-        <div class="meme-card-info">
-          <h4 class="meme-card-caption">${escapeHtml(post.caption)}</h4>
-          <div class="card-stats-footer">
-            <span class="card-stat" title="Views">👁️ ${formatNumber(post.views_count)}</span>
-            <span class="card-stat" title="Reactions">❤️ ${formatNumber(post.reactions_count)}</span>
-            <span class="card-stat" title="Comments">💬 ${formatNumber(post.comments_count)}</span>
-          </div>
-        </div>
-      `;
-      appendMemeDownloadButton(card.querySelector('.meme-card-info'), post);
-
-      card.addEventListener('click', () => openMemeDetail(post.id));
-      DOM.trendingCardsContainer.appendChild(card);
-    });
-  }
-
-  /**
    * Load Latest Memes Feed with Filtering & Pagination
    */
   async function loadFeedMemes(reset = false) {
@@ -842,14 +788,14 @@
   async function loadForYouSection() {
     if (!DOM.forYouCardsContainer) return;
 
-    const { data: forYou } = await window.LillyDB.getFeedPosts({ limit: 4, sort: 'reactions_count' });
+    const { data: forYou } = await window.LillyDB.getForYouPosts(4);
 
     if (!forYou || forYou.length === 0) return;
 
     DOM.forYouCardsContainer.innerHTML = '';
     forYou.forEach(post => {
       const card = document.createElement('div');
-      card.className = 'trending-meme-card';
+      card.className = 'meme-feed-card';
       card.innerHTML = `
         <div class="meme-card-thumb-wrap">
           <img src="${escapeHtml(post.image_url)}" alt="${escapeHtml(post.caption)}" class="meme-card-thumb" loading="lazy">
@@ -1295,7 +1241,6 @@
 
     const category = DOM.postCategorySelect.value;
     const hashtags = DOM.postHashtags.value.trim();
-    const isFeatured = DOM.postIsFeatured.checked;
     const isMotd = DOM.postIsMotd.checked;
 
     const submitBtn = $('#submitPublishMemeBtn');
@@ -1325,7 +1270,6 @@
       category,
       hashtags,
       isMotd,
-      isFeatured,
       userId: state.currentUser.id
     });
 
@@ -1344,7 +1288,6 @@
       // Refresh feeds after the database record already exists.
       await Promise.allSettled([
         loadFeedMemes(true),
-        loadTrendingMemes(),
         loadForYouSection(),
         isMotd ? loadMemeOfTheDay() : Promise.resolve()
       ]);
@@ -1691,12 +1634,6 @@
         window.location.hash = '#categories';
       });
     }
-    if (DOM.qaViewTrending) {
-      DOM.qaViewTrending.addEventListener('click', () => {
-        const section = $('#trendingSection');
-        if (section) section.scrollIntoView({ behavior: 'smooth' });
-      });
-    }
     if (DOM.qaSavedMemes) {
       DOM.qaSavedMemes.addEventListener('click', () => {
         if (!state.currentUser) {
@@ -2040,7 +1977,6 @@
     checkAuthSession();
 
     // Fetch initial feeds
-    loadTrendingMemes();
     loadFeedMemes(true);
     loadMemeOfTheDay();
     loadForYouSection();
